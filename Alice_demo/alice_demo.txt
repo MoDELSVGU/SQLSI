@@ -1,0 +1,257 @@
+* SqlSI configuration
+- main
+JSONArray policy =  (JSONArray) new JSONParser().parse(new FileReader("/Users/clavel/VGU/Repositories/SqlSI/Alice_demo/alice_policy.json"));
+JSONArray context =  (JSONArray) new JSONParser().parse(new FileReader("/Users/clavel/VGU/Repositories/SqlSI/Alice_demo/alice_context.json"));
+JSONArray queries = (JSONArray) new JSONParser().parse(new FileReader("/Users/clavel/VGU/Repositories/SqlSI/Alice_demo/alice_test.json"));
+
+- SqlSIGenAuthFun
+File file = new File("/Users/clavel/VGU/Repositories/SqlSI/Alice_demo/alice_fun.sql");
+
+- SqlSIGen
+File file = new File("/Users/clavel/VGU/Repositories/SqlSI/Alice_demo/alice_proc.sql");	
+================
+=== BASE POLICY
+=================
+[{"entity" : "Employee",
+"permissions" :
+[
+{"resources" : ["name", "salary", "age"],
+"actions" : ["read"],
+"roles" : ["Alice"],
+"auth" : "kself = kcaller"
+},
+{"resources" : ["name", "salary"],
+"actions" : ["read"],
+"roles" : ["Alice"],
+"auth" : " kself.Employee:salary < 60000"
+},
+{"resources" : ["name", "age"],
+"actions" : ["read"],
+"roles" : ["Alice"],
+"auth" : "kself.Employee:age < 30"
+}
+]
+}
+]
+================
+=== BASE SCENARIO
+=================
+
+mysql> use aliceDB;
+mysql> show tables;
++-------------------+
+| Tables_in_alicedb |
++-------------------+
+| employee          |
+| role              |
++-------------------+
+
+
+mysql> select * from employee;
++-------------+-------+------+--------+------+
+| employee_id | name  | age  | salary | role |
++-------------+-------+------+--------+------+
+|           1 | Alice |   22 |  30000 |    1 |
+|           2 | Carl  |   34 |  40000 |    2 |
+|           3 | Diane |   28 |  55000 |    2 |
++-------------+-------+------+--------+------+
+
+
+mysql> select * from role;
++---------+--------+
+| role_id | name   |
++---------+--------+
+|       1 | Alice  |
+|       2 | Others |
++---------+--------+
+
+
+==========
+=== BASE QUERIES
+==========
+[
+{
+"name" : "ReadAllEmployeeInfo",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name, age, salary  FROM Employee"]
+},
+{
+"name" : "ReadNameAllEmployees",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee"]
+},
+{
+"name" : "ReadNameEmployeesAboveEq25",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee WHERE age >= 25"]
+},
+{
+"name" : "ReadNameEmployeesBelow25",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee WHERE age < 25"]
+},
+{
+"name" : "ReadNameEmployeesBelow25V2",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT Employee.name FROM Employee LEFT JOIN (SELECT name FROM Employee WHERE age >= 25) AS TEMP ON Employee.name = TEMP.name WHERE TEMP.name IS NULL"]
+}
+]
+
+==========================================
+==== ACCESS MODEL: TRUMAN
+==========================================
+- SqlSIGenAuthFun(context, policy, false);
+
+==========
+=== EXAMPLE #1
+==========
+NOTE: interesting because Alice cannot see Carls age, and therefore
+it does not appear in the result.
+
+mysql> call ReadAllEmployeeInfo(1);
++-------+------+--------+
+| name  | age  | salary |
++-------+------+--------+
+| Alice |   22 |  30000 |
+| Diane |   28 |  55000 |
++-------+------+--------+
+
+============
+=== EXAMPLE #2
+=============
+mysql> call ReadNameAllEmployees(1);
++-------+
+| name  |
++-------+
+| Alice |
+| Carl  |
+| Diane |
++-------+
+
+============
+=== EXAMPLE #3
+=============
+NOTE: interesting because the WHERE includes access to resource "age", 
+which needs to be controlled as well.
+In fact, although Carl is about 25, Alice cannot see his name because
+Alice cannot see his age.
+
+mysql> call ReadNameEmployeesAboveEq25(1);
++-------+
+| name  |
++-------+
+| Diane |
++-------+
+
+============
+=== EXAMPLE #4
+=============
+NOTE: interesting because the WHERE includes access to resource "age", 
+which needs to be controlled as well. 
+
+mysql> call ReadNameEmployeesBelow25(1);
++-------+
+| name  |
++-------+
+| Alice |
++-------+
+
+============
+=== EXAMPLE #5
+=============
+NOTE: interesting for the TRUMAN-model, because the result "should" not
+be the same that if executing the "semantically" equivalent procedure 
+ReadNameEmployeesBelow25. In fact, it "should" return an erroneous
+result (namely, it "should" return a list including Carl, who is over 25).
+Currently, the result is current: the TRUMAN-model is not implemented
+for the case of subselect expressions.
+
+mysql> call ReadNameEmployeesBelow25V2(1);
++-------+
+| name  |
++-------+
+| Alice |
++-------+
+
+==========================================
+==== ACCESS MODEL: NON-TRUMAN
+==========================================
+- SqlSIGenAuthFun(context, policy, true);
+
+==========
+=== EXAMPLE #1
+==========
+NOTE: interesting because Alice cannot see Carls age, and therefore
+it not authorized to see anything in the list.
+
+mysql> call ReadAllEmployeeInfo(1);
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+============
+=== EXAMPLE #2
+=============
+mysql> call ReadNameAllEmployees(1);
++-------+
+| name  |
++-------+
+| Alice |
+| Carl  |
+| Diane |
++-------+
+
+============
+=== EXAMPLE #3
+=============
+NOTE: interesting because the WHERE includes access to resource "age", 
+which needs to be controlled as well.
+Since Carl is about 25, Alice cannot see his age, and therefore cannot see
+anything in the expected list.
+
+mysql> call ReadNameEmployeesAboveEq25(1);
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+
+============
+=== EXAMPLE #4
+=============
+NOTE: interesting because the WHERE includes access to resource "age", 
+which needs to be controlled as well. 
+
+mysql> call ReadNameEmployeesBelow25(1);
++-------+
+| name  |
++-------+
+| Alice |
++-------+
+
+============
+=== EXAMPLE #5
+=============
+NOTE: interesting for the TRUMAN-model, because the result "should" not
+be the same that if executing the "semantically" equivalent procedure 
+ReadNameEmployeesBelow25.
+
+mysql> call ReadNameEmployeesBelow25V2(1);
++-------+
+| name  |
++-------+
+| Alice |
++-------+

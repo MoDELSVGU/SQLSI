@@ -1,0 +1,20 @@
+[{"entity" : "Employee",
+"permissions" :
+[
+{"resources" : ["name", "salary", "age"],
+"actions" : ["read"],
+"default" : "kself = kcaller"
+},
+{"resources" : ["name", "age"],
+"actions" : ["read"],
+"roles" : ["Admin"],
+"auth" : "kself.Employee:age < 30"
+},
+{"resources" : ["name", "salary"],
+"actions" : ["read"],
+"roles" : ["Admin"],
+"auth" : " kself.Employee:salary < 60000"
+}
+]
+}
+]

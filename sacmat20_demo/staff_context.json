@@ -1,0 +1,34 @@
+[
+	{
+		"class": "Employee",
+		"attributes": [
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "age",
+				"type": "Integer"
+			},
+			{
+				"name": "salary",
+				"type": "Integer"
+			}
+		],
+		"ends": [
+			{
+				"name": "supervisee",
+				"target": "Employee",
+				"opp": "supervisor",
+				"mult": "*"
+			},
+			{
+				"name": "supervisor",
+				"target": "Employee",
+				"opp": "supervisee",
+				"mult": "*"
+			}
+		],
+		"isUserClass": "true"
+	}
+]

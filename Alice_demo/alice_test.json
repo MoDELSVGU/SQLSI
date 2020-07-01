@@ -1,0 +1,58 @@
+[
+{
+"name" : "Q1",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT 1 FROM Employee"]
+},
+{
+"name" : "Q2",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee"]
+},
+{
+"name" : "Q3",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT age FROM Employee"]
+},
+{
+"name" : "Q4",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT salary FROM Employee"]
+},
+{
+"name" : "Q5",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT TEMP.name FROM (SELECT name, salary FROM Employee) AS TEMP"]
+},
+{
+"name" : "Q6",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name, age, salary FROM Employee"]
+},
+{
+"name" : "Q7",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT salary FROM Employee WHERE age >= 25"]
+},
+{
+"name" : "Q8",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT salary FROM Employee AS TEMP LEFT JOIN (SELECT Employee_id FROM Employee WHERE age < 25) AS COMP ON TEMP.Employee_id = COMP.Employee_id WHERE COMP.Employee_id IS NULL"]
+}
+]

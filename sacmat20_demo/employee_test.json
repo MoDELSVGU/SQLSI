@@ -1,0 +1,30 @@
+[
+{
+"name" : "ReadNameAllEmployees",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee"]
+},
+{
+"name" : "ReadAllEmployeeInfo",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name, age, salary FROM Employee"]
+},
+{
+"name" : "ReadNameEmployeesAboveEq25",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee WHERE age >= 25"]
+},
+{
+"name" : "ReadNameEmployeesBelow25",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT name FROM Employee WHERE age < 25"]
+}
+]

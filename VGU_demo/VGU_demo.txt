@@ -1,0 +1,260 @@
+=================================================
+Scenario (default)
+=================================================
++---------+----------+ // Role: *
+| role_id | name     |
++---------+----------+
+|       1 | Student  |
+|       2 | Lecturer |
+|       3 | Staff    |
+|       4 | Admin    |
++---------+----------+
+
++-------------+------+ // Reg_User: reg_user_id, role
+| reg_user_id | role |
++-------------+------+
+|           1 |    1 |
+|           5 |    1 |
+|           2 |    2 |
+|           3 |    2 |
+|           4 |    4 |
++-------------+------+
+
++-------------+----------+ // Lecturer
+| Lecturer_id | Reg_User |
++-------------+----------+
+|           1 |        2 |
+|           2 |        3 |
++-------------+----------+
+
++------------+----------+ // Student
+| Student_id | Reg_User |
++------------+----------+
+|          1 |        1 |
+|          2 |        5 |
++------------+----------+
+
++---------+----------+ // Enrollment
+| courses | students |
++---------+----------+
+|       1 |        1 |
++---------+----------+
+
++---------+-----------+ // Teaching
+| courses | lecturers |
++---------+-----------+
+|       1 |         1 |
+|       1 |         2 |
++---------+-----------+
+
+=======
+Queries: ReadAllRegUserInfo();
+=======
+
+> call ReadAllRegUserInfo(1)  // student
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+> call ReadAllRegUserInfo(2) // lecturer
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+> call ReadAllRegUserInfo(4) // admin
++------------+-------------+----------------------+-------------------+
+| given_name | middle_name | family_name          | email             |
++------------+-------------+----------------------+-------------------+
+| Trung      | Quốc        | Phạm                 | trung@gmail.com   |
+| Manuel     | Garcia      | Clavel               | manuel@gmail.com  |
+| Jaime      | Nubiola     | Aguilar              | jaime@gmail.com   |
+| Trang      | Thi Thuy    | Nguyen               | trang@gmail.com   |
+| Aldiyar    | NULL        | Zagitov Yerzhanovich | aldiyar@gmail.com |
++------------+-------------+----------------------+-------------------+
+
+=================================================
+Scenario #1: lectures can read given_name, middle_name, family_name, email
+a) policy
+1. update policy accordingly.
+
+{"resources" : ["given_name", "middle_name", "family_name", "email"],
+"actions" : ["read"],
+"roles" : ["Lecturer"],
+"auth" : true"
+}
+
+2. regenerate SQL-procedures.
+3. source in new SQL-procedures.
+
+b) database: unchanged
+=================================================
+
+=======
+Queries: ReadAllRegUserInfo()
+=======
+
+> call ReadAllRegUserInfo(1)  // student
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+> call ReadAllRegUserInfo(2) // lecturer
++------------+-------------+----------------------+-------------------+
+| given_name | middle_name | family_name          | email             |
++------------+-------------+----------------------+-------------------+
+| Trung      | Quốc        | Phạm                 | trung@gmail.com   |
+| Manuel     | Garcia      | Clavel               | manuel@gmail.com  |
+| Jaime      | Nubiola     | Aguilar              | jaime@gmail.com   |
+| Trang      | Thi Thuy    | Nguyen               | trang@gmail.com   |
+| Aldiyar    | NULL        | Zagitov Yerzhanovich | aldiyar@gmail.com |
++------------+-------------+----------------------+-------------------+
+
+> call ReadAllRegUserInfo(4) // admin
++------------+-------------+----------------------+-------------------+
+| given_name | middle_name | family_name          | email             |
++------------+-------------+----------------------+-------------------+
+| Trung      | Quốc        | Phạm                 | trung@gmail.com   |
+| Manuel     | Garcia      | Clavel               | manuel@gmail.com  |
+| Jaime      | Nubiola     | Aguilar              | jaime@gmail.com   |
+| Trang      | Thi Thuy    | Nguyen               | trang@gmail.com   |
+| Aldiyar    | NULL        | Zagitov Yerzhanovich | aldiyar@gmail.com |
++------------+-------------+----------------------+-------------------+
+
+=================================================
+Scenario #2: 
+a) policy: back to the original policy: 
+lectures can read given_name, middle_name, family_name, email
+of their students.
+
+1. update policy accordingly.
+
+{"resources" : ["given_name", "middle_name", "family_name", "email"],
+"actions" : ["read"],
+"roles" : ["Lecturer"],
+"auth" : "kself.oclAsType(Student).Student:courses->exists(c|c.Course:lecturers->includes(kcaller.oclAsType(Lecturer)))"
+}
+
+2. regenerate SQL-procedures.
+3. source in new SQL-procedures.
+
+b) database: unchanged
+=================================================
+
+=======
+Queries: ReadThisRegUserInfo()
+=======
+
+> call ReadThisRegUserInfo(2, 1)  // student enrolled in lecturer's course
++------------+-------------+-------------+-----------------+
+| given_name | middle_name | family_name | email           |
++------------+-------------+-------------+-----------------+
+| Trung      | Quốc        | Phạm        | trung@gmail.com |
++------------+-------------+-------------+-----------------+
+
+> call ReadThisRegUserInfo(2, 5); // student not enrolled in lecturer's course
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+> call ReadThisRegUserInfo(3, 1)  // student enrolled in lecturer's course
++------------+-------------+-------------+-----------------+
+| given_name | middle_name | family_name | email           |
++------------+-------------+-------------+-----------------+
+| Trung      | Quốc        | Phạm        | trung@gmail.com |
++------------+-------------+-------------+-----------------+
+
+> call ReadThisRegUserInfo(3, 5); // student not enrolled in lecturer's course
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+
+=================================================
+Scenario #2: 
+a) policy: unchanged (= original policy)
+
+b) database: free lecturer_id = 2 (reg_user_id = 5) from any teaching duties
+
+1. modify database accordingly
+
+DELETE FROM  Teaching WHERE lecturers = 2; 
+
+% To go back to original scenario database:
+% INSERT INTO Teaching (courses, lecturers) VALUES (1, 2);
+=================================================
+
+=======
+Queries: ReadThisRegUserInfo()
+=======
+
+> call ReadThisRegUserInfo(2, 1)  // student enrolled in lecturer's course
++------------+-------------+-------------+-----------------+
+| given_name | middle_name | family_name | email           |
++------------+-------------+-------------+-----------------+
+| Trung      | Quốc        | Phạm        | trung@gmail.com |
++------------+-------------+-------------+-----------------+
+
+> call ReadThisRegUserInfo(2, 5); // student not enrolled in lecturer's course
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+> call ReadThisRegUserInfo(3, 1)  // (*) student now is enrolled in lecturer's course
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+
+> call ReadThisRegUserInfo(3, 5); // student not enrolled in lecturer's course
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+
+
+================================================= CHECKING WHERE-CHECKS
+Scenario #2: 
+a) policy: change original policy by removing permission to lecturers to
+read reg_user emails.
+
+b) database: original
+=================================================
+
+=======
+Queries: ReadRegUserInfoThisEmail()
+=======
+
+mysql> call ReadRegUserInfoThisEmail(1, "trung@gmail.com");
++------------+-------------+-------------+
+| given_name | middle_name | family_name |
++------------+-------------+-------------+
+| Trung      | Quốc        | Phạm        |
++------------+-------------+-------------+
+1 row in set (0.01 sec)
+
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> call ReadRegUserInfoThisEmail(2, "trung@gmail.com");
++-------+---------------------+
+| @p1   | @p2                 |
++-------+---------------------+
+| 45000 | Unauthorized access |
++-------+---------------------+
+1 row in set (0.01 sec)
+
+

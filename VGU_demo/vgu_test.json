@@ -1,0 +1,25 @@
+[
+{
+"name" : "ReadAllRegUserInfo",
+"pars" : [],
+"vars" : [],
+"body" : 
+["SELECT given_name, middle_name, family_name, email  FROM Reg_User"]
+},
+{
+"name" : "ReadThisRegUserInfo",
+"pars" : [{"name" : "preg_user_id", "type" : "Integer"}],
+"vars" : [],
+"body" : 
+["SELECT given_name, middle_name, family_name, email  FROM Reg_User
+  WHERE Reg_User_id = preg_user_id"]
+},
+{
+"name" : "ReadRegUserInfoThisEmail",
+"pars" : [{"name" : "pemail", "type" : "String"}],
+"vars" : [],
+"body" : 
+["SELECT given_name, middle_name, family_name FROM Reg_User
+  WHERE email = pemail"]
+}
+]

@@ -1,0 +1,20 @@
+[{"entity" : "Reg_User",
+"permissions" :
+[
+{"resources" : ["given_name", "middle_name", "family_name", "email"],
+"actions" : ["read"],
+"default" : "kself = kcaller"
+},
+{"resources" : ["given_name", "middle_name", "family_name", "email"],
+"actions" : ["read"],
+"roles" : ["Lecturer"],
+"auth" : "kself.oclAsType(Student).Student:courses->exists(c|c.Course:lecturers->includes(kcaller.oclAsType(Lecturer)))"
+},
+{"resources" : ["given_name", "middle_name", "family_name", "email"],
+"actions" : ["read"],
+"roles" : ["Admin"],
+"auth" : "true"
+}
+]
+}
+]

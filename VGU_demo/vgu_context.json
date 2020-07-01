@@ -1,0 +1,48 @@
+[
+{"class" : "Role",
+"attributes" : [
+{"name" : "name", "type" : "String"}
+],
+"isRoleClass" : "true"
+},
+{"class" : "Reg_User",
+"attributes" : [
+{"name" : "family_name",
+"type" : "String"
+},
+{"name" : "middle_name",
+"type" : "String"
+},
+{"name" : "given_name",
+"type" : "String"
+},
+{"name" : "email",
+"type" : "String"
+},
+{"name" : "role",
+"type" : "Integer"
+}
+],
+"isUserClass" : "true"
+},
+{"class" : "Student",
+ "super" : "Reg_User"
+},
+{"class" : "Lecturer",
+ "super" : "Reg_User"
+},
+{"class" : "Course",
+  "attributes" : 
+  [{"name" : "name", "type" : "String"}]
+},
+{"association" : "Enrollment",
+"ends" : ["courses", "students"],
+"classes" : ["Student", "Course"],
+"multis" : ["*", "*"]
+},
+{"association" : "Teaching",
+"ends" : ["courses", "lecturers"],
+"classes" : ["Lecturer", "Course"],
+"multis" : ["*", "*"]
+}
+]
