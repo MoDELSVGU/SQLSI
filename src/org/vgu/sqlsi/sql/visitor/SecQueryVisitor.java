@@ -10,6 +10,7 @@ import org.vgu.sqlsi.sql.temptable.SQLTemporaryTable;
 
 import net.sf.jsqlparser.statement.Block;
 import net.sf.jsqlparser.statement.Commit;
+import net.sf.jsqlparser.statement.DeclareStatement;
 import net.sf.jsqlparser.statement.DescribeStatement;
 import net.sf.jsqlparser.statement.ExplainStatement;
 import net.sf.jsqlparser.statement.SetStatement;
@@ -235,6 +236,12 @@ public class SecQueryVisitor implements StatementVisitor {
     public void visit(ShowStatement arg0) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void visit(DeclareStatement aThis) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

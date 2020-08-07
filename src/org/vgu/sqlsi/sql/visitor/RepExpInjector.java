@@ -24,6 +24,7 @@ import org.vgu.dm2schema.dm.DataModel;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
+import net.sf.jsqlparser.expression.ArrayExpression;
 import net.sf.jsqlparser.expression.CaseExpression;
 import net.sf.jsqlparser.expression.CastExpression;
 import net.sf.jsqlparser.expression.CollateExpression;
@@ -66,6 +67,7 @@ import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseRightShift;
 import net.sf.jsqlparser.expression.operators.arithmetic.BitwiseXor;
 import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
 import net.sf.jsqlparser.expression.operators.arithmetic.Division;
+import net.sf.jsqlparser.expression.operators.arithmetic.IntegerDivision;
 import net.sf.jsqlparser.expression.operators.arithmetic.Modulo;
 import net.sf.jsqlparser.expression.operators.arithmetic.Multiplication;
 import net.sf.jsqlparser.expression.operators.arithmetic.Subtraction;
@@ -74,9 +76,11 @@ import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.Between;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExistsExpression;
+import net.sf.jsqlparser.expression.operators.relational.FullTextSearch;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThan;
 import net.sf.jsqlparser.expression.operators.relational.GreaterThanEquals;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
+import net.sf.jsqlparser.expression.operators.relational.IsBooleanExpression;
 import net.sf.jsqlparser.expression.operators.relational.IsNullExpression;
 import net.sf.jsqlparser.expression.operators.relational.JsonOperator;
 import net.sf.jsqlparser.expression.operators.relational.LikeExpression;
@@ -648,6 +652,30 @@ public class RepExpInjector implements ExpressionVisitor {
 
     public void setRightExp(Expression rightExp) {
         this.rightExp = rightExp;
+    }
+
+    @Override
+    public void visit(IntegerDivision division) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void visit(FullTextSearch fullTextSearch) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void visit(IsBooleanExpression isBooleanExpression) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void visit(ArrayExpression aThis) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
