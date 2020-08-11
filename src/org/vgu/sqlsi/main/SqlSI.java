@@ -34,38 +34,23 @@ public class SqlSI {
     private List<SQLSIAuthFunction> functions;
     private SecurityMode mode;
     static final String SECQUERY = "SecQuery";
-    static final String GENDB = "GenDB";
-
-    public void setUpDefaultModel()
-        throws FileNotFoundException, IOException, ParseException, Exception {
-        dataModel = transformToDataModel(Configuration.dataModelInputURI);
-        securityModel = transformToSecurityModel(
-            Configuration.policyModelInputURI);
-    }
-
+    
     public void setUpDataModelFromURL(String url)
         throws FileNotFoundException, IOException, ParseException, Exception {
         dataModel = transformToDataModel(url);
     }
-
+    
+    public void generateDBSchema(String outputUrl, String schemaName) throws IOException {
+        SqlSIGenDatabase(dataModel, outputUrl, schemaName);
+    }
+    
     public void setUpSecurityModelFromURL(String url)
         throws FileNotFoundException, IOException, ParseException, Exception {
         securityModel = transformToSecurityModel(url);
     }
 
-    public String generateSchema() {
-        String sqlScript = DM2Schema.generateDatabase(dataModel, GENDB);
-        return sqlScript;
-    }
-
-    public String generateAuthFunction() throws Exception {
-        String sqlAuthFuncs = "";
-        sqlAuthFuncs = sqlAuthFuncs.concat(PrintingUtils.printThrowErrorFunc(mode));
-        functions = FunctionUtils.printAuthFun(dataModel, securityModel, mode);
-        for (SQLSIAuthFunction function : functions)
-            sqlAuthFuncs = sqlAuthFuncs
-                .concat(PrintingUtils.printAuthFunc(function));
-        return sqlAuthFuncs;
+    public void generateSQLAuthFunctions(String outputUrl) throws Exception {
+        SqlSIGenAuthFunc(dataModel, securityModel, mode, outputUrl);
     }
 
     public String getSecQuery(String query) throws Exception {
@@ -83,6 +68,18 @@ public class SqlSI {
         storedProcedure.setTemps(temps);
         String sqlProc = PrintingUtils.printProc(storedProcedure);
         return sqlProc;
+    }
+    
+    public void generateSQLSecureQuery(String query, String outputUrl) throws Exception {
+        File secQueryFile = new File(outputUrl);
+        FileWriter fileWriter = new FileWriter(secQueryFile);
+        try {
+            fileWriter.write(getSecQuery(query));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        fileWriter.flush();
+        fileWriter.close();
     }
 
     public static void run(String dataModelURI, String policyModelURI,

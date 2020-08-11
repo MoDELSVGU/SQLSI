@@ -32,8 +32,6 @@ public class Main {
             sqlSI.setUpDataModelFromURL(Configuration.dataModelInputURI);
             sqlSI.setUpSecurityModelFromURL(Configuration.policyModelInputURI);
             sqlSI.setMode(SecurityMode.NON_TRUMAN);
-            sqlSI.generateSchema();
-            sqlSI.generateAuthFunction();
             String proc = sqlSI.getSecQuery("SELECT email FROM Lecturer");
             System.out.println(proc);
         }

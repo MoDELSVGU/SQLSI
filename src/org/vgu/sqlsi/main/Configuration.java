@@ -22,19 +22,19 @@ import org.vgu.sqlsi.sec.SecurityMode;
 
 public class Configuration {
     // relative file URL of DataModel
-    public static final String dataModelInputURI = "jot2020_demo/vgu_dm.json";
+    public static final String dataModelInputURI = "fdse2020_demo/vgu_dm.json";
     // relative file URL of SecurityModel
-    public static final String policyModelInputURI = "jot2020_demo/vgu_policy.json";
+    public static final String policyModelInputURI = "fdse2020_demo/vgu_policy.json";
     // relative file URL of Query for enforcing security policy
-    public static final String queryToBeEnforcedInputURI = "jot2020_demo/vgu_query.json";
+    public static final String queryToBeEnforcedInputURI = "fdse2020_demo/vgu_query.json";
     // relative file URL of SQL Schema auto-generate
-    public static final String sqlSchemaOutputURI = "jot2020_demo/vgu_db.sql";
+    public static final String sqlSchemaOutputURI = "fdse2020_demo/vgu_db.sql";
     // schema name
     public static final String schemaName = "sqlsi2020";
     // relative file URL of SQL auth function generate
-    public static final String sqlAuthFunctionOutputURI = "jot2020_demo/vgu_fun.sql";
+    public static final String sqlAuthFunctionOutputURI = "fdse2020_demo/vgu_fun.sql";
     // relative file URL of SQL auth stored procedure generate
-    public static final String sqlStoredProcedureOutputURI = "jot2020_demo/vgu_sp.sql";
+    public static final String sqlStoredProcedureOutputURI = "fdse2020_demo/vgu_sp.sql";
     // Security Mode: Currently accepting NON_TRUMAN
     public static final SecurityMode securityMode = SecurityMode.NON_TRUMAN;
     // Security Prefix Parameter: The prefix of auth function/sec stored
