@@ -4,7 +4,6 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 import org.vgu.sqlsi.main.Configuration;
 import org.vgu.sqlsi.main.SqlSI;
-import org.vgu.sqlsi.sec.SecurityMode;
 
 /**************************************************************************
  * Copyright 2020 Vietnamese-German-University
@@ -29,24 +28,23 @@ public class Main {
         public static void main(String[] args)
             throws FileNotFoundException, IOException, ParseException, Exception {
             SqlSI sqlSI = new SqlSI();
+            
             sqlSI.setUpDataModelFromURL(Configuration.dataModelInputURI);
             sqlSI.setUpSecurityModelFromURL(Configuration.policyModelInputURI);
-            sqlSI.setMode(SecurityMode.NON_TRUMAN);
-            String proc = sqlSI.getSecQuery("SELECT email FROM Lecturer");
-            System.out.println(proc);
+            sqlSI.generateSQLSecureQuery("SELECT email FROM Lecturer", Configuration.sqlStoredProcedureOutputURI);
         }
     }
     
     public static class Direct {
         public static void main(String[] args)
             throws FileNotFoundException, IOException, ParseException, Exception {
-            SqlSI.run(Configuration.dataModelInputURI,
+            SqlSI sqlSI = new SqlSI();
+            sqlSI.run(Configuration.dataModelInputURI,
                 Configuration.policyModelInputURI, Configuration.schemaName,
                 Configuration.queryToBeEnforcedInputURI,
                 Configuration.sqlSchemaOutputURI,
                 Configuration.sqlAuthFunctionOutputURI,
-                Configuration.sqlStoredProcedureOutputURI,
-                Configuration.securityMode);
+                Configuration.sqlStoredProcedureOutputURI);
         }
     }
 }

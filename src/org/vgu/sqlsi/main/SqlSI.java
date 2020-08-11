@@ -32,7 +32,7 @@ public class SqlSI {
     private DataModel dataModel;
     private SecPolicyModel securityModel;
     private List<SQLSIAuthFunction> functions;
-    private SecurityMode mode;
+    private SecurityMode mode = SecurityMode.NON_TRUMAN;
     static final String SECQUERY = "SecQuery";
     
     public void setUpDataModelFromURL(String url)
@@ -41,12 +41,14 @@ public class SqlSI {
     }
     
     public void generateDBSchema(String outputUrl, String schemaName) throws IOException {
-        SqlSIGenDatabase(dataModel, outputUrl, schemaName);
+        SqlSIGenDatabase(dataModel, schemaName, outputUrl);
     }
     
     public void setUpSecurityModelFromURL(String url)
         throws FileNotFoundException, IOException, ParseException, Exception {
         securityModel = transformToSecurityModel(url);
+        functions = FunctionUtils
+            .printAuthFun(dataModel, securityModel, mode);
     }
 
     public void generateSQLAuthFunctions(String outputUrl) throws Exception {
@@ -82,22 +84,21 @@ public class SqlSI {
         fileWriter.close();
     }
 
-    public static void run(String dataModelURI, String policyModelURI,
+    public void run(String dataModelURI, String policyModelURI,
         String schemaName, String queryModelURI, String schemaoutputURI,
-        String authFuncOutputURI, String authProcOutputURI,
-        SecurityMode secMode)
+        String authFuncOutputURI, String authProcOutputURI)
         throws FileNotFoundException, IOException, ParseException, Exception {
         DataModel dataModel = transformToDataModel(dataModelURI);
         SecPolicyModel securityModel = transformToSecurityModel(policyModelURI);
 
         SqlSIGenDatabase(dataModel, schemaName, schemaoutputURI);
         List<SQLSIAuthFunction> functions = SqlSIGenAuthFunc(dataModel,
-            securityModel, secMode, authFuncOutputURI);
+            securityModel, mode, authFuncOutputURI);
         SqlSIGenSecQuery(dataModel, functions, authProcOutputURI,
             queryModelURI);
     }
 
-    private static void SqlSIGenSecQuery(DataModel dataModel,
+    private void SqlSIGenSecQuery(DataModel dataModel,
         List<SQLSIAuthFunction> functions, String sqlstoredprocedureoutputuri,
         String querytobeenforcedinputuri) throws Exception {
         File secQueryFile = new File(sqlstoredprocedureoutputuri);
@@ -149,7 +150,7 @@ public class SqlSI {
         fileWriter.close();
     }
 
-    private static Stack<SQLTemporaryTable> genSecProc(String statement,
+    private Stack<SQLTemporaryTable> genSecProc(String statement,
         JSONArray vars, JSONArray pars, DataModel dataModel,
         List<SQLSIAuthFunction> functions) throws Exception {
         Statement statementSql = CCJSqlParserUtil.parse(statement);
@@ -165,7 +166,7 @@ public class SqlSI {
         return secQuery.getResult();
     }
 
-    private static SecPolicyModel transformToSecurityModel(
+    private SecPolicyModel transformToSecurityModel(
         String securityModelURI)
         throws IOException, ParseException, FileNotFoundException {
         File policyFile = new File(securityModelURI);
@@ -175,7 +176,7 @@ public class SqlSI {
         return secureUML;
     }
 
-    private static DataModel transformToDataModel(String dataModelURI)
+    private DataModel transformToDataModel(String dataModelURI)
         throws IOException, ParseException, FileNotFoundException, Exception {
         File dataModelFile = new File(dataModelURI);
         JSONArray dataModelJSONArray = (JSONArray) new JSONParser()
@@ -184,7 +185,7 @@ public class SqlSI {
         return context;
     }
 
-    private static void SqlSIGenDatabase(DataModel context, String databaseName,
+    private void SqlSIGenDatabase(DataModel context, String databaseName,
         String sqlschemaoutputuri) throws IOException {
         File dbGenFile = new File(sqlschemaoutputuri);
         FileWriter fileWriter = new FileWriter(dbGenFile);
@@ -199,7 +200,7 @@ public class SqlSI {
         }
     }
 
-    private static List<SQLSIAuthFunction> SqlSIGenAuthFunc(DataModel dataModel,
+    private List<SQLSIAuthFunction> SqlSIGenAuthFunc(DataModel dataModel,
         SecPolicyModel securityModel, SecurityMode secMode, String sqlauthfunctionoutputuri)
         throws Exception {
         File funGenFile = new File(sqlauthfunctionoutputuri);
@@ -220,10 +221,6 @@ public class SqlSI {
             fileWriter.close();
         }
         return functions;
-    }
-
-    public SecurityMode getMode() {
-        return mode;
     }
 
     public void setMode(SecurityMode mode) {
