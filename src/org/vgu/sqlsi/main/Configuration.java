@@ -18,25 +18,7 @@ limitations under the License.
 
 package org.vgu.sqlsi.main;
 
-import org.vgu.sqlsi.sec.SecurityMode;
-
 public class Configuration {
-    // relative file URL of DataModel
-    public static final String dataModelInputURI = "fdse2020_demo/vgu_dm.json";
-    // relative file URL of SecurityModel
-    public static final String policyModelInputURI = "fdse2020_demo/vgu_policy.json";
-    // relative file URL of Query for enforcing security policy
-    public static final String queryToBeEnforcedInputURI = "fdse2020_demo/vgu_query.json";
-    // relative file URL of SQL Schema auto-generate
-    public static final String sqlSchemaOutputURI = "fdse2020_demo/vgu_db.sql";
-    // schema name
-    public static final String schemaName = "sqlsi2020";
-    // relative file URL of SQL auth function generate
-    public static final String sqlAuthFunctionOutputURI = "fdse2020_demo/vgu_fun.sql";
-    // relative file URL of SQL auth stored procedure generate
-    public static final String sqlStoredProcedureOutputURI = "fdse2020_demo/vgu_sp.sql";
-    // Security Mode: Currently accepting NON_TRUMAN
-    public static final SecurityMode securityMode = SecurityMode.NON_TRUMAN;
     // Security Prefix Parameter: The prefix of auth function/sec stored
     // procedure parameters
     public static final String PARAM_PREFIX = "k";
