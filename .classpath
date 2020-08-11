@@ -16,6 +16,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="ocl2psql.jar" sourcepath="/OCL2PSQL"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
