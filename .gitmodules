@@ -1,0 +1,3 @@
+[submodule "SQLTranslator"]
+	path = SQLTranslator
+	url = https://github.com/SE-at-VGU/SQLTranslator
