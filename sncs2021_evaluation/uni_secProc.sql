@@ -1,7 +1,7 @@
-DROP PROCEDURE IF EXISTS Evaluation_1;
+DROP PROCEDURE IF EXISTS read_lecture_email_by_name;
 /* SELECT email FROM Lecturer WHERE name = 'lname1' */
 DELIMITER //
-CREATE PROCEDURE Evaluation_1(in kcaller varchar(250), in krole varchar(250))
+CREATE PROCEDURE read_lecture_email_by_name(in kcaller varchar(250), in krole varchar(250))
 BEGIN
 DECLARE _rollback int DEFAULT 0;
 DECLARE EXIT HANDLER FOR SQLEXCEPTION

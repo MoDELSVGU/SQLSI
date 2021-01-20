@@ -50,7 +50,28 @@ CREATE FUNCTION auth_READ_Lecturer_name(kcaller varchar(250), krole varchar(250)
 RETURNS INT DETERMINISTIC
 BEGIN
 DECLARE result INT DEFAULT 0;
-RETURN 0;
+IF (krole = 'Lecturer')
+    THEN IF (auth_READ_Lecturer_name_Lecturer(kcaller, kself))
+        THEN RETURN (1);
+        ELSE RETURN (0);
+    END IF;
+ELSE RETURN 0;
+END IF;
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS auth_READ_Lecturer_name_Lecturer;
+/* FUNC: auth_READ_Lecturer_name_Lecturer */
+DELIMITER //
+CREATE FUNCTION auth_READ_Lecturer_name_Lecturer(kcaller varchar(250), kself varchar(250))
+RETURNS INT DETERMINISTIC
+BEGIN
+DECLARE result INT DEFAULT 0;
+SELECT res INTO result FROM 
+(SELECT 
+(TRUE)as res
+) AS TEMP;
+RETURN (result);
 END //
 DELIMITER ;
 
@@ -61,7 +82,28 @@ CREATE FUNCTION auth_READ_Student_name(kcaller varchar(250), krole varchar(250),
 RETURNS INT DETERMINISTIC
 BEGIN
 DECLARE result INT DEFAULT 0;
-RETURN 0;
+IF (krole = 'Lecturer')
+    THEN IF (auth_READ_Student_name_Lecturer(kcaller, kself))
+        THEN RETURN (1);
+        ELSE RETURN (0);
+    END IF;
+ELSE RETURN 0;
+END IF;
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS auth_READ_Student_name_Lecturer;
+/* FUNC: auth_READ_Student_name_Lecturer */
+DELIMITER //
+CREATE FUNCTION auth_READ_Student_name_Lecturer(kcaller varchar(250), kself varchar(250))
+RETURNS INT DETERMINISTIC
+BEGIN
+DECLARE result INT DEFAULT 0;
+SELECT res INTO result FROM 
+(SELECT 
+(TRUE)as res
+) AS TEMP;
+RETURN (result);
 END //
 DELIMITER ;
 

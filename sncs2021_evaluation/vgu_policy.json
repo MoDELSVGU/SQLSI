@@ -8,6 +8,30 @@
 		],
 		"resources": [
 			{
+				"entity": "Lecturer",
+				"attribute": "name"
+			},
+			{
+				"entity": "Student",
+				"attribute": "name"
+			}
+		],
+		"auth": [
+			{
+				"ocl": "true",
+				"sql": "TRUE"
+			}
+		]
+	},
+	{
+		"roles": [
+			"Lecturer"
+		],
+		"actions": [
+			"read"
+		],
+		"resources": [
+			{
 				"association": "Enrollment"
 			}
 		],
