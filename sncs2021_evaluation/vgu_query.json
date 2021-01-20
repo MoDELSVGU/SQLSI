@@ -1,0 +1,10 @@
+[
+	{
+		"name": "Evaluation_1",
+		"pars": [],
+		"vars": [],
+		"body": [
+			"SELECT email FROM Lecturer WHERE name = 'lname1'"
+		]
+	}
+]
