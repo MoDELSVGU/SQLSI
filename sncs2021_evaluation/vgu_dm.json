@@ -9,6 +9,10 @@
 			{
 				"name": "email",
 				"type": "String"
+			},
+			{
+				"name": "age",
+				"type": "Integer"
 			}
 		],
 		"ends": [
@@ -31,6 +35,10 @@
 			{
 				"name": "email",
 				"type": "String"
+			},
+			{
+				"name": "age",
+				"type": "Integer"
 			}
 		],
 		"ends": [

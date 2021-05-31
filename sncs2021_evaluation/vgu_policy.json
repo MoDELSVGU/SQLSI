@@ -1,6 +1,52 @@
 [
 	{
 		"roles": [
+			"Admin"
+		],
+		"actions": [
+			"read"
+		],
+		"resources": [
+			{
+				"entity": "Student",
+				"attribute": "age"
+			},
+			{
+				"association": "Enrollment"
+			}
+		],
+		"auth": [
+			{
+				"ocl": "true",
+				"sql": "TRUE"
+			}
+		]
+	},
+	{
+		"roles": [
+			"Lecturer"
+		],
+		"actions": [
+			"read"
+		],
+		"resources": [
+			{
+				"entity": "Student",
+				"attribute": "age"
+			},
+			{
+				"association": "Enrollment"
+			}
+		],
+		"auth": [
+			{
+				"ocl": "Lecturer.allInstances()->select(l|l.age>caller.age)->isEmpty()",
+				"sql": "EXISTS (SELECT 1 FROM Lecturer l1 WHERE l1.Lecturer_id = kcaller AND NOT EXISTS (SELECT 1 FROM Lecturer l2 WHERE l2.age > l1.age))"
+			}
+		]
+	},
+	{
+		"roles": [
 			"Lecturer"
 		],
 		"actions": [
@@ -73,6 +119,10 @@
 			{
 				"entity": "Student",
 				"attribute": "email"
+			},
+			{
+				"entity": "Student",
+				"attribute": "age"
 			}
 		],
 		"auth": [

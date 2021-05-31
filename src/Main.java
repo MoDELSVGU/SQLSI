@@ -24,13 +24,19 @@ limitations under the License.
 
 public class Main {
     public static void main (String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
-    	final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
-    	final String databaseSchemaURI = "sncs2021_evaluation/uni.sql";
-    	final String policyModelURI = "sncs2021_evaluation/vgu_policy.json";
-    	final String sqlAuthFuncURI = "sncs2021_evaluation/uni_sec.sql";
-    	final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
-    	final String authProcOutputURI = "sncs2021_evaluation/uni_secProc.sql";
-    	final String schemaName = "uni";
+    	final String dataModelURI = "master2021/company.json";
+    	final String databaseSchemaURI = "master2021/company.sql";
+    	final String policyModelURI = "master2021/policy.json";
+    	final String sqlAuthFuncURI = "master2021/company_sec.sql";
+    	final String queryModelURI = "master2021/query.json";
+    	final String authProcOutputURI = "master2021/company_secProc.sql";
+//    	final String dataModelURI = "fdse2020_demo/vgu_dm.json";
+//    	final String databaseSchemaURI = "fdse2020_demo/uni.sql";
+//    	final String policyModelURI = "fdse2020_demo/vguA.json";
+//    	final String sqlAuthFuncURI = "fdse2020_demo/uni_sec.sql";
+//    	final String queryModelURI = "fdse2020_demo/vgu_query.json";
+//    	final String authProcOutputURI = "fdse2020_demo/uni_secProc.sql";
+    	final String schemaName = "CompanyDB";
         SqlSI sqlsi = new SqlSI();
 //        sqlsi.setUpDataModelFromURL(dataModelURI);
 //    	sqlsi.generateDBSchema(databaseSchemaURI, schemaName);

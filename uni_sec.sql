@@ -11,17 +11,6 @@ RETURN (0);
 END //
 DELIMITER ;
 
-DROP FUNCTION IF EXISTS auth_READ_Lecturer_age;
-/* FUNC: auth_READ_Lecturer_age */
-DELIMITER //
-CREATE FUNCTION auth_READ_Lecturer_age(kcaller varchar(250), krole varchar(250), kself varchar(250))
-RETURNS INT DETERMINISTIC
-BEGIN
-DECLARE result INT DEFAULT 0;
-RETURN 0;
-END //
-DELIMITER ;
-
 DROP FUNCTION IF EXISTS auth_READ_Lecturer_email;
 /* FUNC: auth_READ_Lecturer_email */
 DELIMITER //
@@ -54,10 +43,10 @@ RETURN (result);
 END //
 DELIMITER ;
 
-DROP FUNCTION IF EXISTS auth_READ_Lecturer_name;
-/* FUNC: auth_READ_Lecturer_name */
+DROP FUNCTION IF EXISTS auth_READ_Lecturer_age;
+/* FUNC: auth_READ_Lecturer_age */
 DELIMITER //
-CREATE FUNCTION auth_READ_Lecturer_name(kcaller varchar(250), krole varchar(250), kself varchar(250))
+CREATE FUNCTION auth_READ_Lecturer_age(kcaller varchar(250), krole varchar(250), kself varchar(250))
 RETURNS INT DETERMINISTIC
 BEGIN
 DECLARE result INT DEFAULT 0;
@@ -65,10 +54,10 @@ RETURN 0;
 END //
 DELIMITER ;
 
-DROP FUNCTION IF EXISTS auth_READ_Student_age;
-/* FUNC: auth_READ_Student_age */
+DROP FUNCTION IF EXISTS auth_READ_Lecturer_name;
+/* FUNC: auth_READ_Lecturer_name */
 DELIMITER //
-CREATE FUNCTION auth_READ_Student_age(kcaller varchar(250), krole varchar(250), kself varchar(250))
+CREATE FUNCTION auth_READ_Lecturer_name(kcaller varchar(250), krole varchar(250), kself varchar(250))
 RETURNS INT DETERMINISTIC
 BEGIN
 DECLARE result INT DEFAULT 0;
@@ -105,6 +94,17 @@ SELECT res INTO result FROM
 (EXISTS (SELECT 1 FROM Enrollment WHERE lecturers = kcaller AND kself = students))as res
 ) AS TEMP;
 RETURN (result);
+END //
+DELIMITER ;
+
+DROP FUNCTION IF EXISTS auth_READ_Student_age;
+/* FUNC: auth_READ_Student_age */
+DELIMITER //
+CREATE FUNCTION auth_READ_Student_age(kcaller varchar(250), krole varchar(250), kself varchar(250))
+RETURNS INT DETERMINISTIC
+BEGIN
+DECLARE result INT DEFAULT 0;
+RETURN 0;
 END //
 DELIMITER ;
 
