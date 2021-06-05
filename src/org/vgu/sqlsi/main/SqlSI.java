@@ -221,7 +221,7 @@ public class SqlSI {
 		}
 	}
 
-	private List<SQLSIAuthFunction> SqlSIGenAuthFunc(DataModel dataModel, SecPolicyModel securityModel,
+	public List<SQLSIAuthFunction> SqlSIGenAuthFunc(DataModel dataModel, SecPolicyModel securityModel,
 			SecurityMode secMode, String sqlauthfunctionoutputuri) throws Exception {
 		File funGenFile = new File(sqlauthfunctionoutputuri);
 		FileWriter fileWriter = new FileWriter(funGenFile);

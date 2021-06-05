@@ -95,7 +95,7 @@ public class FunctionUtils {
         return sqlAuthFunction;
     }
 
-    private static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
+    public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
         String action, Entity entity, Attribute attribute,
         List<SecUnitRule> rules) {
         HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
@@ -155,7 +155,7 @@ public class FunctionUtils {
         return sqlAuthFunction;
     }
 
-    private static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
+    public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
         String action, Association association, List<SecUnitRule> rules) {
         HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
         if (rules != null) {
