@@ -21,6 +21,7 @@ import java.util.Map;
 public class BenchmarkLauncher {
 	private static final String ENV_TOOL = "TOOL";
 	private static final String ENV_MODE = "MODE";
+	private static final String ENV_NAME = "NAME";
 	private static final String ENV_RUN_INDEX = "RUNINDEX";
 	private static final String ENV_DATAMODE_PATH = "DATAMODELPATH";
 	private static final String ENV_POLICY_PATH = "POLICYPATH";
@@ -57,6 +58,11 @@ public class BenchmarkLauncher {
 		final String sRole = env.get(ENV_ROLE);
 		if (sRole != null) {
 			c.setsRole(sRole);
+		}
+		
+		final String sName = env.get(ENV_NAME);
+		if (sName != null) {
+			c.setsName(sName);
 		}
 		
 		final String sUser = env.get(ENV_USER);
@@ -120,6 +126,8 @@ public class BenchmarkLauncher {
 			new Solution().runSQLSITransformation(c);
 		else if ("QUERY".equalsIgnoreCase(c.getsMode()))
 			new Solution().runExecQuery(c);
+		else if ("MASTERQUERY".equalsIgnoreCase(c.getsMode()))
+			new Solution().execQuery(c);
 		else if ("AUTHQUERY".equalsIgnoreCase(c.getsMode()))
 			new Solution().runExecAuthQuery(c);
 		else 

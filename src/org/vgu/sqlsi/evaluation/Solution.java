@@ -13,6 +13,7 @@ public class Solution {
 	private static final String METRIC_SECURITY_TIME = "SecurityModelTransformTimeSecs";
 	private static final String METRIC_QUERY_REWRITING_TIME = "QueryRewritingTimeSecs";
 	private static final String METRIC_EXECUTION_TIME = "ExecutionTimeSecs";
+	private static final String MASTER_METRIC_EXECUTION_TIME = "ExecutionTimeSecs";
 	private static final String METRIC_EXECUTION_AUTH_TIME = "ExecutionAuthTimeSecs";
 
 	private static final String databaseSchemaURI = "uni.sql";
@@ -176,6 +177,29 @@ public class Solution {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void execQuery(Configuration c) {
+		Connection conn = DatabaseConnection.getConnection(c.getsScenario());
+		String query = c.getsQuery();
+		Statement st;
+		try {
+			st = conn.createStatement();
+			final long nanosExecutionStart = System.nanoTime();
+			st.executeQuery(query);
+			final long nanosExecutionEnd = System.nanoTime();
+			final double timeInSecs = ((double) nanosExecutionEnd - nanosExecutionStart) / 1_000_000_000;
+			printMasterQueryExecutionMetric(c, MASTER_METRIC_EXECUTION_TIME, timeInSecs);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	private void printMasterQueryExecutionMetric(Configuration c, String metricName, Object metricValue) {
+		String scenario = c.getsScenario().substring(3);
+
+		System.out.println(String.format("%s;%d;%s;%d;%s;%s;%s;%s", c.getsTool(), Integer.valueOf(scenario),
+				c.getsName(), c.getRunIndex(), "any", "any", metricName, metricValue.toString()));
 	}
 
 }

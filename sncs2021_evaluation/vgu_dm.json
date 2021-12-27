@@ -7,10 +7,6 @@
 				"type": "String"
 			},
 			{
-				"name": "email",
-				"type": "String"
-			},
-			{
 				"name": "age",
 				"type": "Integer"
 			}
@@ -30,10 +26,6 @@
 		"attributes": [
 			{
 				"name": "name",
-				"type": "String"
-			},
-			{
-				"name": "email",
 				"type": "String"
 			},
 			{

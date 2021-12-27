@@ -9,7 +9,7 @@ import java.io.File;
 public class Configuration {
 
 	private String sMode;
-	private String sScenario, sQueryExec, sProcedureCall, sUser, sRole;
+	private String sScenario, sQueryExec, sProcedureCall, sUser, sRole, sName;
 
 	private int runIndex;
 	private String sTool, sQuery, dataModelPath, securityModelPath;
@@ -117,6 +117,14 @@ public class Configuration {
 
 	public void setsQueryExec(String sQueryExec) {
 		this.sQueryExec = sQueryExec;
+	}
+
+	public String getsName() {
+		return sName;
+	}
+
+	public void setsName(String sName) {
+		this.sName = sName;
 	}
 
 }

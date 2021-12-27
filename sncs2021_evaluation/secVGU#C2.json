@@ -9,7 +9,23 @@
 		"resources": [
 			{
 				"association": "Enrollment"
-			},
+			}
+		],
+		"auth": [
+			{
+				"ocl": "Lecturer.allInstances()->select(l|l.age > kcaller.age)->isEmpty()",
+				"sql": "(SELECT MAX(age) FROM Lecturer) = (SELECT age FROM Lecturer WHERE Lecturer_id = kcaller)"
+			}
+		]
+	},
+	{
+		"roles": [
+			"Lecturer"
+		],
+		"actions": [
+			"read"
+		],
+		"resources": [
 			{
 				"entity": "Student",
 				"attribute": "age"
@@ -17,7 +33,7 @@
 		],
 		"auth": [
 			{
-				"ocl": "Lecturer.allInstances()->select(l|l.age>caller.age)->isEmpty()",
+				"ocl": "Lecturer.allInstances()->select(l|l.age > kcaller.age)->isEmpty()",
 				"sql": "(SELECT MAX(age) FROM Lecturer) = (SELECT age FROM Lecturer WHERE Lecturer_id = kcaller)"
 			}
 		]
