@@ -1,4 +1,4 @@
-package org.vgu.sqlsi.main;
+package main;
 
 import java.io.File;
 import java.io.FileNotFoundException;

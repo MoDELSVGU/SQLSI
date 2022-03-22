@@ -1,3 +1,4 @@
+package main;
 /*
  *     Copyright [2021] Hoang Nguyen
  *
@@ -13,10 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.vgu.sqlsi.evaluation;
+
 
 import java.io.File;
 import java.util.Map;
+
+import evaluation.Configuration;
+import evaluation.Solution;
+
 
 public class BenchmarkLauncher {
 	private static final String ENV_TOOL = "TOOL";
@@ -38,37 +43,37 @@ public class BenchmarkLauncher {
 //		for (String key : env.keySet()) {
 //			System.out.println(key + " " + env.get(key));
 //		}
-		
+
 		final String sProcedureCall = env.get(ENV_PROCEDURE_CALL);
 		if (sProcedureCall != null) {
 			c.setsProcedureCall(sProcedureCall);
 		}
-		
+
 		final String sScenario = env.get(ENV_SCENARIO);
 		if (sScenario != null) {
 			c.setsScenario(sScenario);
 		}
-		
+
 		final String sQuery = env.get(ENV_QUERY);
 		if (sQuery != null) {
 			c.setsQuery(sQuery);
 		}
-		
+
 		final String sRole = env.get(ENV_ROLE);
 		if (sRole != null) {
 			c.setsRole(sRole);
 		}
-		
+
 		final String sUser = env.get(ENV_USER);
 		if (sUser != null) {
 			c.setsUser(sUser);
 		}
-		
+
 		final String sQueryExec = env.get(ENV_QUERY_EXEC);
 		if (sQueryExec != null) {
 			c.setsQueryExec(sQueryExec);
 		}
-		
+
 		final String sMode = env.get(ENV_MODE);
 		if (sMode != null) {
 			c.setsMode(sMode);
@@ -114,7 +119,7 @@ public class BenchmarkLauncher {
 
 	public static void main(String[] args) {
 		Configuration c = createConfiguration();
-		if("DMSM".equalsIgnoreCase(c.getsMode()))
+		if ("DMSM".equalsIgnoreCase(c.getsMode()))
 			new Solution().runDMSMTransformation(c);
 		else if ("SQLSI".equalsIgnoreCase(c.getsMode()))
 			new Solution().runSQLSITransformation(c);
@@ -122,7 +127,7 @@ public class BenchmarkLauncher {
 			new Solution().runExecQuery(c);
 		else if ("AUTHQUERY".equalsIgnoreCase(c.getsMode()))
 			new Solution().runExecAuthQuery(c);
-		else 
+		else
 			new Solution().runQR(c);
 	}
 }

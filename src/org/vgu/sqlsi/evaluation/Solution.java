@@ -1,11 +1,11 @@
-package org.vgu.sqlsi.evaluation;
+package evaluation;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.vgu.sqlsi.main.SqlSI;
+import main.SqlSI;
 
 public class Solution {
 
@@ -88,10 +88,10 @@ public class Solution {
 	}
 
 	private void printQueryExecutionMetric(Configuration c, String metricName, Object metricValue) {
-		String scenario = c.getsScenario().substring(3);
+		String scenario = c.getsScenario().substring(3); // get rid of the prefix vgu...
 
-		System.out.println(String.format("%s;%d;%s;%d;%s;%s;%s;%s", c.getsTool(), Integer.valueOf(scenario),
-				c.getsProcedureCall(), c.getRunIndex(), "any", "any", metricName, metricValue.toString()));
+		System.out.println(String.format("%s;%d;%s;%d;%s;%s", c.getsTool(), Integer.valueOf(scenario),
+				c.getsProcedureCall(), c.getRunIndex(), metricName, metricValue.toString()));
 		
 	}
 
@@ -153,20 +153,11 @@ public class Solution {
 	
 	public void runExecAuthQuery(Configuration c) {
 		Connection conn = DatabaseConnection.getConnection(c.getsScenario());
-		final String callStatement = String.format("{call %s}", c.getsProcedureCall());
+		final String callStatement = String.format("{call %s('%s','%s')}", 
+				c.getsProcedureCall(), c.getsUser(), c.getsRole());
 		CallableStatement cs;
 		try {
 			cs = conn.prepareCall(callStatement);
-			if (callStatement.contains("(?)")) {
-				String param = "lid".concat(c.getsScenario().substring(3));
-				cs.setString(1, param);
-			}
-			if (callStatement.contains("(?,?)")) {
-				String param = "lid".concat(c.getsScenario().substring(3));
-				cs.setString(1, param);
-				param = "sid1";
-				cs.setString(2, param);
-			}
 			final long nanosExecutionStart = System.nanoTime();
 			cs.execute();
 			final long nanosExecutionEnd = System.nanoTime();

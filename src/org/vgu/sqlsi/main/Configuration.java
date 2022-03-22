@@ -16,7 +16,7 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.sqlsi.main;
+package main;
 
 public class Configuration {
     // Security Prefix Parameter: The prefix of auth function/sec stored

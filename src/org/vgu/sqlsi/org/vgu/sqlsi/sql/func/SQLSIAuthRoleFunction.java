@@ -23,9 +23,10 @@ import java.util.List;
 
 import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.Attribute;
-import org.vgu.sqlsi.main.Configuration;
 import org.vgu.sqlsi.utils.PrintingUtils;
 import org.vgu.sqlsi.utils.Template;
+
+import main.Configuration;
 
 public class SQLSIAuthRoleFunction extends SQLFunction {
     private String role;

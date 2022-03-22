@@ -47,7 +47,7 @@
 								<!-- automatically creates the classpath using all project dependencies, 
 									also adding the project build directory -->
 								<classpath />
-								<argument>org.vgu.sqlsi.evaluation.BenchmarkLauncher</argument>
+								<argument>main.BenchmarkLauncher</argument>
 							</arguments>
 						</configuration>
 					</plugin>

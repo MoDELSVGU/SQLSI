@@ -1,4 +1,4 @@
-package org.vgu.sqlsi.evaluation;
+package evaluation;
 
 import java.io.File;
 

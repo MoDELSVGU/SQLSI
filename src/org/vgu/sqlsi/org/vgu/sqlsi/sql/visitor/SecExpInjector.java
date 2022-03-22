@@ -6,10 +6,10 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.sqlsi.main.Configuration;
 import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
 import org.vgu.sqlsi.utils.SQLSIUtils;
 
+import main.Configuration;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
