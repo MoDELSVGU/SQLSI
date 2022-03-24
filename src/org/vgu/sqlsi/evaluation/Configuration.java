@@ -14,6 +14,9 @@ public class Configuration {
 	private int runIndex;
 	private String sTool, sQuery, dataModelPath, securityModelPath;
 	private File dataModel, securityModel;
+	
+	private String dbusername;
+	private String dbpassword;
 
 	public String getsTool() {
 		return sTool;
@@ -117,6 +120,22 @@ public class Configuration {
 
 	public void setsQueryExec(String sQueryExec) {
 		this.sQueryExec = sQueryExec;
+	}
+
+	public String getDbusername() {
+		return dbusername;
+	}
+
+	public void setDbusername(String dbusername) {
+		this.dbusername = dbusername;
+	}
+
+	public String getDbpassword() {
+		return dbpassword;
+	}
+
+	public void setDbpassword(String dbpassword) {
+		this.dbpassword = dbpassword;
 	}
 
 }

@@ -21,7 +21,7 @@ public class Solution {
 
 	public void runDMSMTransformation(Configuration c) {
 		SqlSI sqlsi = new SqlSI();
-		
+
 		try {
 			sqlsi.setUpDataModel(c.getDataModel());
 //			final long nanosDMActionStart = System.nanoTime();
@@ -32,7 +32,7 @@ public class Solution {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			sqlsi.setUpSecurityModel(c.getSecurityModel());
 			final long nanosSMActionStart = System.nanoTime();
@@ -54,10 +54,10 @@ public class Solution {
 	}
 
 	public void runSQLSITransformation(Configuration c) {
-		Connection conn = DatabaseConnection.getConnection(c.getsScenario());
+		Connection conn = DatabaseConnection.getConnection(c.getsScenario(), c.getDbusername(), c.getDbpassword());
 		final String query = c.getsQueryExec();
 		Statement st;
-		
+
 		final String callStatement = String.format("{call %s(?,?)}", c.getsProcedureCall());
 		CallableStatement cs;
 		try {
@@ -74,7 +74,6 @@ public class Solution {
 			e.printStackTrace();
 		}
 
-		
 //		try {
 //			final long nanosExecutionStart = System.nanoTime();
 //			st = conn.createStatement();
@@ -92,7 +91,7 @@ public class Solution {
 
 		System.out.println(String.format("%s;%d;%s;%d;%s;%s", c.getsTool(), Integer.valueOf(scenario),
 				c.getsProcedureCall(), c.getRunIndex(), metricName, metricValue.toString()));
-		
+
 	}
 
 	private void printSQLSIMetric(Configuration c, String metricName, Object metricValue) {
@@ -135,7 +134,7 @@ public class Solution {
 	}
 
 	public void runExecQuery(Configuration c) {
-		Connection conn = DatabaseConnection.getConnection(c.getsScenario());
+		Connection conn = DatabaseConnection.getConnection(c.getsScenario(), c.getDbusername(), c.getDbpassword());
 		final String callStatement = String.format("{call %s()}", c.getsProcedureCall());
 		CallableStatement cs;
 		try {
@@ -150,11 +149,11 @@ public class Solution {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void runExecAuthQuery(Configuration c) {
-		Connection conn = DatabaseConnection.getConnection(c.getsScenario());
-		final String callStatement = String.format("{call %s('%s','%s')}", 
-				c.getsProcedureCall(), c.getsUser(), c.getsRole());
+		Connection conn = DatabaseConnection.getConnection(c.getsScenario(), c.getDbusername(), c.getDbpassword());
+		final String callStatement = String.format("{call %s('%s','%s')}", c.getsProcedureCall(), c.getsUser(),
+				c.getsRole());
 		CallableStatement cs;
 		try {
 			cs = conn.prepareCall(callStatement);

@@ -35,6 +35,8 @@ public class BenchmarkLauncher {
 	private static final String ENV_SCENARIO = "SCENARIO";
 	private static final String ENV_QUERY = "QUERY";
 	private static final String ENV_QUERY_EXEC = "QUERYEXEC";
+	private static final String ENV_DB_USERNAME = "DBUSER";
+	private static final String ENV_DB_PASSWORD = "DBPSW";
 
 	private static Configuration createConfiguration() {
 		Configuration c = new Configuration();
@@ -114,6 +116,17 @@ public class BenchmarkLauncher {
 				throw new IllegalArgumentException("Cannot read XMI file " + securityModel);
 			}
 		}
+		
+		final String sDbUsername = env.get(ENV_DB_USERNAME);
+		if (sDbUsername != null) {
+			c.setDbusername(sDbUsername);
+		}
+		
+		final String sDbPassword = env.get(ENV_DB_PASSWORD);
+		if (sDbPassword != null) {
+			c.setDbpassword(sDbPassword);
+		}
+		
 		return c;
 	}
 
