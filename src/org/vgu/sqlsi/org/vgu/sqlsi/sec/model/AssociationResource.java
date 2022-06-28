@@ -16,19 +16,25 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package main;
 
-public class Configuration {
-    // Security Prefix Parameter: The prefix of auth function/sec stored
-    // procedure parameters
-    public static final String PARAM_PREFIX = "k";
-    // Security Parameter Type: The type of auth function/sec stored
-    // procedure parameters
-    public static final String PARAM_TYPE = "varchar(250)";
-    // Security variables
-    public static final String SELF = "self";
-    public static final String CALLER = "caller";
-    public static final String TARGET = "target";
-    public static final String VALUE = "value";
-    public static final String ROLE = "role";
+package org.vgu.sqlsi.sec.model;
+
+import org.json.simple.JSONObject;
+
+public class AssociationResource extends Resource {
+    private String association;
+
+    public AssociationResource(JSONObject resourceJSON) {
+        this.association = (String) resourceJSON.get("association");
+    }
+
+    public String getAssociation() {
+        return association;
+    }
+
+    public void setAssociation(String association) {
+        this.association = association;
+    }
+    
+    
 }

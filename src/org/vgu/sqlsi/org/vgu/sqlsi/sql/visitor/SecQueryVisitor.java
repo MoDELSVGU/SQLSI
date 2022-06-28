@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import org.json.simple.JSONArray;
 import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
+import org.vgu.sqlsi.sql.func.AuthFunc;
 import org.vgu.sqlsi.sql.temptable.SQLTemporaryTable;
 
 import net.sf.jsqlparser.statement.Block;
@@ -48,7 +48,7 @@ public class SecQueryVisitor implements StatementVisitor {
         this.dataModel = dataModel;
     }
 
-    private List<SQLSIAuthFunction> functions;
+    private List<AuthFunc> functions;
     private JSONArray parameters;
     private Stack<SQLTemporaryTable> result = new Stack<SQLTemporaryTable>();
 
@@ -60,11 +60,11 @@ public class SecQueryVisitor implements StatementVisitor {
         this.parameters = parameters;
     }
 
-    public List<SQLSIAuthFunction> getFunctions() {
+    public List<AuthFunc> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(List<SQLSIAuthFunction> functions) {
+    public void setFunctions(List<AuthFunc> functions) {
         this.functions = functions;
     }
 

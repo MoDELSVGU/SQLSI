@@ -31,12 +31,12 @@ public class AssociationUnitRule extends SecUnitRule {
         this.association = association;
     }
 
-    public AssociationUnitRule(String action, String role, List<Auth> auths, String association) {
+    public AssociationUnitRule(String action, String role, List<AuthorizationConstraint> auths, String association) {
         super(action, role, auths);
         this.association = association;
     }
 
-    public AssociationUnitRule(String action, String role, List<Auth> auths) {
+    public AssociationUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
         super(action, role, auths);
     }
 

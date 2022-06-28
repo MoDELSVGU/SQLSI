@@ -17,8 +17,8 @@ limitations under the License.
 ***************************************************************************/
 
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sec.model;
 
-public abstract class SecResourceModel {
+public abstract class Resource {
 
 }

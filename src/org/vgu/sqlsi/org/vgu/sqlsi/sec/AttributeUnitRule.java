@@ -40,14 +40,14 @@ public class AttributeUnitRule extends SecUnitRule {
         this.attribute = attribute;
     }
 
-    public AttributeUnitRule(String action, String role, List<Auth> auths,
+    public AttributeUnitRule(String action, String role, List<AuthorizationConstraint> auths,
         String entity, String attribute) {
         super(action, role, auths);
         this.entity = entity;
         this.attribute = attribute;
     }
 
-    public AttributeUnitRule(String action, String role, List<Auth> auths) {
+    public AttributeUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
         super(action, role, auths);
     }
 

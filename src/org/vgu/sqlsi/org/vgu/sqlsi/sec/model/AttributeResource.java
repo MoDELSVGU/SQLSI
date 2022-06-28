@@ -16,35 +16,33 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sec.model;
 
 import org.json.simple.JSONObject;
 
-public class SecAuthModel {
+public class AttributeResource extends Resource {
+    private String entity;
+    private String attribute;
 
-    private String ocl;
-    private String sql;
-
-    public SecAuthModel(Object object) {
-        JSONObject authJSON = (JSONObject) object;
-        this.ocl = (String) authJSON.get("ocl");
-        this.sql = (String) authJSON.get("sql");
+    public AttributeResource(JSONObject resourceJSON) {
+        this.entity = (String) resourceJSON.get("entity");
+        this.attribute = (String) resourceJSON.get("attribute");
     }
 
-    public String getOcl() {
-        return ocl;
+    public String getAttribute() {
+        return attribute;
     }
 
-    public void setOcl(String ocl) {
-        this.ocl = ocl;
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
     }
 
-    public String getSql() {
-        return sql;
+    public String getEntity() {
+        return entity;
     }
 
-    public void setSql(String sql) {
-        this.sql = sql;
+    public void setEntity(String entity) {
+        this.entity = entity;
     }
 
 }

@@ -16,7 +16,7 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sec.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +24,14 @@ import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class SecPolicyModel {
-    private List<SecRuleModel> rules;
+public class SecurityModel {
+    private List<Rule> rules;
     
-    public List<SecRuleModel> getRules() {
+    public List<Rule> getRules() {
         return rules;
     }
 
-    public void setRules(List<SecRuleModel> rules) {
+    public void setRules(List<Rule> rules) {
         this.rules = rules;
     }
 
@@ -40,18 +40,18 @@ public class SecPolicyModel {
         return "SecPolicyModel [rules=" + rules + "]";
     }
 
-    public SecPolicyModel(List<SecRuleModel> rules) {
+    public SecurityModel(List<Rule> rules) {
         this.rules = rules;
     }
     
-    public SecPolicyModel(JSONArray entitiesJSON) {
-        List<SecRuleModel> rules = new ArrayList<SecRuleModel>();
+    public SecurityModel(JSONArray entitiesJSON) {
+        List<Rule> rules = new ArrayList<Rule>();
         for(Object entityJSON : entitiesJSON) {
-            rules.add(new SecRuleModel((JSONObject) entityJSON));
+            rules.add(new Rule((JSONObject) entityJSON));
         }
         this.rules = rules;
     }
 
-    public SecPolicyModel() {
+    public SecurityModel() {
     }
 }

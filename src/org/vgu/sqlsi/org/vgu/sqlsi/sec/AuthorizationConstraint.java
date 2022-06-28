@@ -18,21 +18,31 @@ limitations under the License.
 
 package org.vgu.sqlsi.sec;
 
-public enum SecActionModel {
-    READ, CREATE, UPDATE, DELETE;
+import org.vgu.sqlsi.sec.model.Auth;
 
-    public static SecActionModel getAction(String action) {
-        if (action == null)
-            return null;
-        if ("READ".compareToIgnoreCase(action) == 0)
-            return READ;
-        if ("CREATE".compareToIgnoreCase(action) == 0)
-            return CREATE;
-        if ("UPDATE".compareToIgnoreCase(action) == 0)
-            return UPDATE;
-        if ("DELETE".compareToIgnoreCase(action) == 0)
-            return DELETE;
-        else
-            return null;
-    }
+public class AuthorizationConstraint {
+	private String ocl;
+	private String sql;
+
+	public String getOcl() {
+		return ocl;
+	}
+
+	public void setOcl(String ocl) {
+		this.ocl = ocl;
+	}
+
+	public String getSql() {
+		return sql;
+	}
+
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
+
+	public AuthorizationConstraint(Auth authModel) {
+		this.ocl = authModel.getOcl();
+		this.sql = authModel.getSql();
+	}
+
 }

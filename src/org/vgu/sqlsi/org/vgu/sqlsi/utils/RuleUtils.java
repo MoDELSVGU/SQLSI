@@ -25,18 +25,18 @@ import java.util.stream.Collectors;
 
 import org.vgu.sqlsi.sec.AssociationUnitRule;
 import org.vgu.sqlsi.sec.AttributeUnitRule;
-import org.vgu.sqlsi.sec.Auth;
-import org.vgu.sqlsi.sec.SecActionModel;
-import org.vgu.sqlsi.sec.SecPolicyModel;
-import org.vgu.sqlsi.sec.SecResourceAssociationModel;
-import org.vgu.sqlsi.sec.SecResourceAttributeModel;
-import org.vgu.sqlsi.sec.SecRoleModel;
-import org.vgu.sqlsi.sec.SecRuleModel;
+import org.vgu.sqlsi.sec.AuthorizationConstraint;
 import org.vgu.sqlsi.sec.SecUnitRule;
+import org.vgu.sqlsi.sec.model.Action;
+import org.vgu.sqlsi.sec.model.AssociationResource;
+import org.vgu.sqlsi.sec.model.AttributeResource;
+import org.vgu.sqlsi.sec.model.Role;
+import org.vgu.sqlsi.sec.model.Rule;
+import org.vgu.sqlsi.sec.model.SecurityModel;
 
 public class RuleUtils {
 
-    public static List<SecUnitRule> getAllUnitRules(SecPolicyModel securityModel) {
+    public static List<SecUnitRule> getAllUnitRules(SecurityModel securityModel) {
         List<SecUnitRule> unitRules = new ArrayList<SecUnitRule>();
         unitRules.addAll(getUnitRulesFromEntity(securityModel));
         unitRules.addAll(getUnitRulesFromAssociaiton(securityModel));
@@ -44,39 +44,39 @@ public class RuleUtils {
     }
 
     private static Collection<? extends SecUnitRule> getUnitRulesFromAssociaiton(
-        SecPolicyModel securityModel) {
+        SecurityModel securityModel) {
         List<SecUnitRule> rules = new ArrayList<SecUnitRule>();
         rules.addAll(
-            getUnitRulesFromAssociaiton(SecActionModel.CREATE, securityModel));
+            getUnitRulesFromAssociaiton(Action.CREATE, securityModel));
         rules.addAll(
-            getUnitRulesFromAssociaiton(SecActionModel.READ, securityModel));
+            getUnitRulesFromAssociaiton(Action.READ, securityModel));
         rules.addAll(
-            getUnitRulesFromAssociaiton(SecActionModel.UPDATE, securityModel));
+            getUnitRulesFromAssociaiton(Action.UPDATE, securityModel));
         rules.addAll(
-            getUnitRulesFromAssociaiton(SecActionModel.DELETE, securityModel));
+            getUnitRulesFromAssociaiton(Action.DELETE, securityModel));
         return rules;
     }
 
     private static Collection<? extends SecUnitRule> getUnitRulesFromAssociaiton(
-        SecActionModel action, SecPolicyModel securityModel) {
+        Action action, SecurityModel securityModel) {
         List<SecUnitRule> rules = new ArrayList<SecUnitRule>();
-        List<SecRuleModel> secReadRuleModels = securityModel.getRules().stream()
+        List<Rule> secReadRuleModels = securityModel.getRules().stream()
             .filter(
                 r -> r.getActions() != null && r.getActions().contains(action))
             .collect(Collectors.toList());
-        for (SecRuleModel ruleModel : secReadRuleModels) {
-            List<SecRoleModel> roles = ruleModel.getRoles();
-            List<SecResourceAssociationModel> resources = ruleModel
+        for (Rule ruleModel : secReadRuleModels) {
+            List<Role> roles = ruleModel.getRoles();
+            List<AssociationResource> resources = ruleModel
                 .getResources().stream()
-                .filter(res -> res instanceof SecResourceAssociationModel)
-                .map(SecResourceAssociationModel.class::cast)
+                .filter(res -> res instanceof AssociationResource)
+                .map(AssociationResource.class::cast)
                 .collect(Collectors.toList());
-            List<Auth> auths = ruleModel.getAuth().stream()
-                .map(au -> new Auth(au)).collect(Collectors.toList());
-            for (SecRoleModel role : roles) {
-                for (SecResourceAssociationModel resource : resources) {
+            List<AuthorizationConstraint> auths = ruleModel.getAuth().stream()
+                .map(au -> new AuthorizationConstraint(au)).collect(Collectors.toList());
+            for (Role role : roles) {
+                for (AssociationResource resource : resources) {
                     rules
-                        .add(new AssociationUnitRule(SecActionModel.READ.name(),
+                        .add(new AssociationUnitRule(Action.READ.name(),
                             role.getRole(), auths, resource.getAssociation()));
                 }
             }
@@ -85,38 +85,38 @@ public class RuleUtils {
     }
 
     private static Collection<? extends SecUnitRule> getUnitRulesFromEntity(
-        SecPolicyModel securityModel) {
+        SecurityModel securityModel) {
         List<SecUnitRule> rules = new ArrayList<SecUnitRule>();
         rules.addAll(
-            getUnitRulesFromEntity(SecActionModel.CREATE, securityModel));
+            getUnitRulesFromEntity(Action.CREATE, securityModel));
         rules
-            .addAll(getUnitRulesFromEntity(SecActionModel.READ, securityModel));
+            .addAll(getUnitRulesFromEntity(Action.READ, securityModel));
         rules.addAll(
-            getUnitRulesFromEntity(SecActionModel.UPDATE, securityModel));
+            getUnitRulesFromEntity(Action.UPDATE, securityModel));
         rules.addAll(
-            getUnitRulesFromEntity(SecActionModel.DELETE, securityModel));
+            getUnitRulesFromEntity(Action.DELETE, securityModel));
         return rules;
     }
 
     private static Collection<? extends SecUnitRule> getUnitRulesFromEntity(
-        SecActionModel action, SecPolicyModel securityModel) {
+        Action action, SecurityModel securityModel) {
         List<SecUnitRule> rules = new ArrayList<SecUnitRule>();
-        List<SecRuleModel> secReadRuleModels = securityModel.getRules().stream()
+        List<Rule> secReadRuleModels = securityModel.getRules().stream()
             .filter(
                 r -> r.getActions() != null && r.getActions().contains(action))
             .collect(Collectors.toList());
-        for (SecRuleModel ruleModel : secReadRuleModels) {
-            List<SecRoleModel> roles = ruleModel.getRoles();
-            List<SecResourceAttributeModel> resources = ruleModel.getResources()
+        for (Rule ruleModel : secReadRuleModels) {
+            List<Role> roles = ruleModel.getRoles();
+            List<AttributeResource> resources = ruleModel.getResources()
                 .stream()
-                .filter(res -> res instanceof SecResourceAttributeModel)
-                .map(SecResourceAttributeModel.class::cast)
+                .filter(res -> res instanceof AttributeResource)
+                .map(AttributeResource.class::cast)
                 .collect(Collectors.toList());
-            List<Auth> auths = ruleModel.getAuth().stream()
-                .map(au -> new Auth(au)).collect(Collectors.toList());
-            for (SecRoleModel role : roles) {
-                for (SecResourceAttributeModel resource : resources) {
-                    rules.add(new AttributeUnitRule(SecActionModel.READ.name(),
+            List<AuthorizationConstraint> auths = ruleModel.getAuth().stream()
+                .map(au -> new AuthorizationConstraint(au)).collect(Collectors.toList());
+            for (Role role : roles) {
+                for (AttributeResource resource : resources) {
+                    rules.add(new AttributeUnitRule(Action.READ.name(),
                         role.getRole(), auths, resource.getEntity(),
                         resource.getAttribute()));
                 }

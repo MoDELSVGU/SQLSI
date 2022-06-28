@@ -8,7 +8,7 @@ import java.util.Stack;
 import org.json.simple.JSONArray;
 import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
+import org.vgu.sqlsi.sql.func.AuthFunc;
 import org.vgu.sqlsi.sql.select.SelectBasicAssociation;
 import org.vgu.sqlsi.sql.select.SelectBasicClass;
 import org.vgu.sqlsi.sql.select.SelectBasicSub;
@@ -41,7 +41,7 @@ import net.sf.jsqlparser.statement.values.ValuesStatement;
 
 public class SelectInjector implements SelectVisitor {
     private DataModel dataModel;
-    private List<SQLSIAuthFunction> functions;
+    private List<AuthFunc> functions;
     private String action;
     private JSONArray parameters;
     private Stack<SQLTemporaryTable> results = new Stack<SQLTemporaryTable>();
@@ -72,11 +72,11 @@ public class SelectInjector implements SelectVisitor {
         return authFunctions;
     }
 
-    public List<SQLSIAuthFunction> getFunctions() {
+    public List<AuthFunc> getFunctions() {
         return functions;
     }
 
-    public void setFunctions(List<SQLSIAuthFunction> functions) {
+    public void setFunctions(List<AuthFunc> functions) {
         this.functions = functions;
     }
 

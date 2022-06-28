@@ -19,15 +19,18 @@ limitations under the License.
 package org.vgu.sqlsi.sec;
 
 import org.json.simple.JSONObject;
+import org.vgu.sqlsi.sec.model.AssociationResource;
+import org.vgu.sqlsi.sec.model.AttributeResource;
+import org.vgu.sqlsi.sec.model.Resource;
 
 public class SecResourceFactory {
 
-    public static SecResourceModel create(Object object) {
+    public static Resource create(Object object) {
         JSONObject resourceJSON = (JSONObject) object;
         if (resourceJSON.containsKey("association")) {
-            return new SecResourceAssociationModel(resourceJSON);
+            return new AssociationResource(resourceJSON);
         } else {
-            return new SecResourceAttributeModel(resourceJSON);
+            return new AttributeResource(resourceJSON);
         }
     }
 

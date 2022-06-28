@@ -30,23 +30,18 @@ import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
 import org.vgu.sqlsi.sec.AssociationUnitRule;
 import org.vgu.sqlsi.sec.AttributeUnitRule;
-import org.vgu.sqlsi.sec.Auth;
-import org.vgu.sqlsi.sec.SecPolicyModel;
+import org.vgu.sqlsi.sec.AuthorizationConstraint;
 import org.vgu.sqlsi.sec.SecUnitRule;
-import org.vgu.sqlsi.sec.SecurityMode;
-import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
-import org.vgu.sqlsi.sql.func.SQLSIAuthRoleFunction;
+import org.vgu.sqlsi.sec.model.SecurityModel;
+import org.vgu.sqlsi.sql.func.AuthFunc;
+import org.vgu.sqlsi.sql.func.AuthRoleFunc;
 
 public class FunctionUtils {
 
-    public static List<SQLSIAuthFunction> printAuthFun(DataModel dataModel,
-        SecPolicyModel securityModel, SecurityMode secMode) throws Exception {
-        // TEMPORARY CATCH
-        if (secMode != SecurityMode.NON_TRUMAN) {
-            throw new Exception("Unsuppoted SecurityMode: TRUMAN");
-        }
+    public static List<AuthFunc> printAuthFun(DataModel dataModel,
+        SecurityModel securityModel) throws Exception {
         List<SecUnitRule> rules = RuleUtils.getAllUnitRules(securityModel);
-        List<SQLSIAuthFunction> functions = new ArrayList<SQLSIAuthFunction>();
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
         for (Entity entity : dataModel.getEntities().values()) {
             functions.addAll(getAuthFun(entity, rules));
         }
@@ -56,9 +51,9 @@ public class FunctionUtils {
         return functions;
     }
 
-    private static List<SQLSIAuthFunction> getAuthFun(Entity entity,
+    private static List<AuthFunc> getAuthFun(Entity entity,
         List<SecUnitRule> rules) {
-        List<SQLSIAuthFunction> functions = new ArrayList<SQLSIAuthFunction>();
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
         for (Attribute attribute : entity.getAttributes()) {
             functions
                 .add(getAuthFunFromAttribute("READ", entity, attribute, rules));
@@ -66,28 +61,28 @@ public class FunctionUtils {
         return functions;
     }
 
-    private static SQLSIAuthFunction getAuthFunFromAttribute(String action,
+    private static AuthFunc getAuthFunFromAttribute(String action,
         Entity entity, Attribute attribute, List<SecUnitRule> rules) {
         HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(
             action, entity, attribute, rules);
         String authFunName = String.format("%1$s_%2$s", entity.getName(),
             attribute.getName());
-        SQLSIAuthFunction sqlAuthFunction = new SQLSIAuthFunction(action,
+        AuthFunc sqlAuthFunction = new AuthFunc(action,
             authFunName);
         sqlAuthFunction.setParameters(attribute);
         if (!indexRules.isEmpty()) {
             for (String role : indexRules.keySet()) {
-                SQLSIAuthRoleFunction sqlAuthRoleFunction = new SQLSIAuthRoleFunction(
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(
                     action, authFunName, role);
                 sqlAuthRoleFunction.setParameters(attribute);
                 List<SecUnitRule> ruleRoleBased = indexRules.get(role);
                 sqlAuthRoleFunction
                     .setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-                        .flatMap(auths -> auths.stream().map(Auth::getOcl))
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
                         .collect(Collectors.toList()));
                 sqlAuthRoleFunction
                     .setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-                        .flatMap(auths -> auths.stream().map(Auth::getSql))
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
                         .collect(Collectors.toList()));
                 sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
             }
@@ -120,34 +115,34 @@ public class FunctionUtils {
         return indexRules;
     }
 
-    private static Collection<? extends SQLSIAuthFunction> getAuthFun(
+    private static Collection<? extends AuthFunc> getAuthFun(
         Association association, List<SecUnitRule> rules) {
-        List<SQLSIAuthFunction> functions = new ArrayList<SQLSIAuthFunction>();
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
         functions.add(getAuthFunFromAssociation("READ", association, rules));
         return functions;
     }
 
-    private static SQLSIAuthFunction getAuthFunFromAssociation(String action,
+    private static AuthFunc getAuthFunFromAssociation(String action,
         Association association, List<SecUnitRule> rules) {
         HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(
             action, association, rules);
         String authFunName = String.format("%s", association.getName());
-        SQLSIAuthFunction sqlAuthFunction = new SQLSIAuthFunction(action,
+        AuthFunc sqlAuthFunction = new AuthFunc(action,
             authFunName);
         sqlAuthFunction.setParameters(association);
         if (!indexRules.isEmpty()) {
             for (String role : indexRules.keySet()) {
-                SQLSIAuthRoleFunction sqlAuthRoleFunction = new SQLSIAuthRoleFunction(
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(
                     action, authFunName, role);
                 sqlAuthRoleFunction.setParameters(association);
                 List<SecUnitRule> ruleRoleBased = indexRules.get(role);
                 sqlAuthRoleFunction
                     .setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-                        .flatMap(auths -> auths.stream().map(Auth::getOcl))
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
                         .collect(Collectors.toList()));
                 sqlAuthRoleFunction
                     .setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-                        .flatMap(auths -> auths.stream().map(Auth::getSql))
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
                         .collect(Collectors.toList()));
                 sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
             }

@@ -16,10 +16,35 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
+package org.vgu.sqlsi.sec.model;
 
-package org.vgu.sqlsi.sec;
+import org.json.simple.JSONObject;
 
-public enum SecurityMode {
-    TRUMAN,
-    NON_TRUMAN
+public class Auth {
+
+    private String ocl;
+    private String sql;
+
+    public Auth(Object object) {
+        JSONObject authJSON = (JSONObject) object;
+        this.ocl = (String) authJSON.get("ocl");
+        this.sql = (String) authJSON.get("sql");
+    }
+
+    public String getOcl() {
+        return ocl;
+    }
+
+    public void setOcl(String ocl) {
+        this.ocl = ocl;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
+    }
+
 }

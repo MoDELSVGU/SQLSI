@@ -16,9 +16,9 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sec.model;
 
-public class SecRoleModel {
+public class Role {
 
     private String role;
 
@@ -26,10 +26,10 @@ public class SecRoleModel {
         return role;
     }
 
-    public SecRoleModel() {
+    public Role() {
     }
 
-    public SecRoleModel(String role) {
+    public Role(String role) {
         this.role = role;
     }
 
@@ -58,7 +58,7 @@ public class SecRoleModel {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        SecRoleModel other = (SecRoleModel) obj;
+        Role other = (Role) obj;
         if (role == null) {
             if (other.role != null)
                 return false;

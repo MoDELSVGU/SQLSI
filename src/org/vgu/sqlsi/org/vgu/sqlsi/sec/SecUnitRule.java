@@ -23,7 +23,7 @@ import java.util.List;
 public abstract class SecUnitRule {
     private String action;
     private String role;
-    private List<Auth> auths;
+    private List<AuthorizationConstraint> auths;
 
     public String getAction() {
         return action;
@@ -41,7 +41,7 @@ public abstract class SecUnitRule {
         this.role = role;
     }
 
-    public SecUnitRule(String action, String role, List<Auth> auths) {
+    public SecUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
         this.action = action;
         this.role = role;
         this.auths = auths;
@@ -50,11 +50,11 @@ public abstract class SecUnitRule {
     public SecUnitRule() {
     }
 
-    public List<Auth> getAuths() {
+    public List<AuthorizationConstraint> getAuths() {
         return auths;
     }
 
-    public void setAuths(List<Auth> auths) {
+    public void setAuths(List<AuthorizationConstraint> auths) {
         this.auths = auths;
     }
 

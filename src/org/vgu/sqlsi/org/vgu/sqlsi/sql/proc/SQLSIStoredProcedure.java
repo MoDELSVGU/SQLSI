@@ -26,12 +26,22 @@ import org.vgu.sqlsi.sql.temptable.DropTemporaryTable;
 import org.vgu.sqlsi.sql.temptable.SQLTemporaryTable;
 import org.vgu.sqlsi.utils.Template;
 
+import main.SQLSIConfiguration;
+
 public class SQLSIStoredProcedure extends SQLStoredProcedure {
     private String name;
     private HashMap<String, String> parameters;
     private Stack<SQLTemporaryTable> temps;
     private String action;
     private String comments;
+    
+    public SQLSIStoredProcedure() {
+    	this.name = "SecQuery";
+    	HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put(SQLSIConfiguration.CALLER, SQLSIConfiguration.PARAM_TYPE);
+		parameters.put(SQLSIConfiguration.ROLE, SQLSIConfiguration.PARAM_TYPE);
+		setParameters(parameters);
+	}
 
     public Stack<SQLTemporaryTable> getTemps() {
         return temps;
@@ -54,7 +64,7 @@ public class SQLSIStoredProcedure extends SQLStoredProcedure {
         return parameters;
     }
 
-    public void setParameters(HashMap<String, String> parameters) {
+    private void setParameters(HashMap<String, String> parameters) {
         this.parameters = parameters;
     }
 

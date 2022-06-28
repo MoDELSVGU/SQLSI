@@ -16,33 +16,21 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
+package org.vgu.sqlsi.sec.model;
 
-package org.vgu.sqlsi.sec;
+public enum Action {
+	READ, CREATE, UPDATE, DELETE;
 
-public class Auth {
-    private String ocl;
-    private String sql;
-    public String getOcl() {
-        return ocl;
-    }
-    public void setOcl(String ocl) {
-        this.ocl = ocl;
-    }
-    public String getSql() {
-        return sql;
-    }
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
-    public Auth(String ocl, String sql) {
-        super();
-        this.ocl = ocl;
-        this.sql = sql;
-    }
-    
-    public Auth (SecAuthModel authModel) {
-        this.ocl = authModel.getOcl();
-        this.sql = authModel.getSql();
-    }
-    
+	public static Action getAction(String action) {
+		if ("READ".equalsIgnoreCase(action))
+			return READ;
+		if ("CREATE".equalsIgnoreCase(action))
+			return CREATE;
+		if ("UPDATE".equalsIgnoreCase(action))
+			return UPDATE;
+		if ("DELETE".equalsIgnoreCase(action))
+			return DELETE;
+		else
+			return null;
+	}
 }

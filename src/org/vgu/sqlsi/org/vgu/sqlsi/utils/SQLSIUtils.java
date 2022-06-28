@@ -29,7 +29,7 @@ import org.vgu.dm2schema.dm.Association;
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
-import org.vgu.sqlsi.sql.func.SQLSIAuthFunction;
+import org.vgu.sqlsi.sql.func.AuthFunc;
 import org.vgu.sqlsi.sql.select.SelectBasicAssociation;
 import org.vgu.sqlsi.sql.select.SelectBasicClass;
 import org.vgu.sqlsi.sql.select.SelectBasicSub;
@@ -502,10 +502,10 @@ public class SQLSIUtils {
         return dataModel.getEntities().containsKey(entityName);
     }
 
-    public static SQLSIAuthFunction findAuthFunctionAssociation(
-        DataModel dataModel, List<SQLSIAuthFunction> functions,
+    public static AuthFunc findAuthFunctionAssociation(
+        DataModel dataModel, List<AuthFunc> functions,
         String columnName, String associationName) throws Exception {
-        Optional<SQLSIAuthFunction> authFun;
+        Optional<AuthFunc> authFun;
         if (functions == null || functions.isEmpty()) {
             throw new Exception("There is no auth function created");
         } else {
@@ -520,10 +520,10 @@ public class SQLSIUtils {
         }
     }
 
-    public static SQLSIAuthFunction findAuthFunctionAttribute(
-        List<SQLSIAuthFunction> functions, String columnName, String tableName)
+    public static AuthFunc findAuthFunctionAttribute(
+        List<AuthFunc> functions, String columnName, String tableName)
         throws Exception {
-        Optional<SQLSIAuthFunction> authFun;
+        Optional<AuthFunc> authFun;
         if (functions == null || functions.isEmpty()) {
             throw new Exception("There is no auth function created");
         } else {

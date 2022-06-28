@@ -32,7 +32,7 @@ public class Template {
         "%1$s" + 
         "END //\r\n";
     public static final String AUTH_FUN_BODY =
-            "IF (%5$srole = '%1$s')\r\n" + 
+            "IF (role = '%1$s')\r\n" + 
             "    THEN IF (%2$s(%3$s))\r\n" + 
             "        THEN RETURN (1);\r\n" + 
             "        ELSE RETURN (0);\r\n" + 
