@@ -1,5 +1,5 @@
 # SQLSI
-SQLSI() is a model transformation function that rewrites SQL queries into
+SQLSI is a model transformation function that rewrites SQL queries into
 "authorized" SQL queries, i.e. into queries that "enforce" the given FGAC-policy at database level.
 
 ## Introduction
