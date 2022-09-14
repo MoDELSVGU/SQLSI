@@ -1,0 +1,10 @@
+[
+	{
+		"name": "Query2",
+		"pars": [],
+		"vars": [],
+		"body": [
+			"SELECT Student_id FROM Student WHERE age > 18"
+		]
+	}
+]
