@@ -29,29 +29,17 @@
     <maven.compiler.source>1.8</maven.compiler.source>
   </properties>
 
-  <profiles>
-    <profile>
-      <id>xmi</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <configuration>
-              <mainClass>org.vgu.sqlsi.main.Main</mainClass>
-              <executable>java</executable>
-              <arguments>
-                <argument>-Xmx1G</argument>
-                <argument>-classpath</argument>
-                <!-- automatically creates the classpath using all project dependencies, 
-									also adding the project build directory -->
-                <classpath />
-                <argument>main.BenchmarkLauncher</argument>
-              </arguments>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+  <build>
+    <plugins>
+      <!-- for the exec command change the main class for correct path to main file-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <mainClass>org.vgu.sqlsi.Main</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

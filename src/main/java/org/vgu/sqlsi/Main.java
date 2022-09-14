@@ -1,4 +1,6 @@
-package org.vgu.sqlsi.main;
+package org.vgu.sqlsi;
+
+import org.vgu.sqlsi.main.SqlSI;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,14 +28,14 @@ import org.json.simple.parser.ParseException;
 public class Main {
   public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
     // input
-    final String dataModelURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/vgu_dm.json";
-    final String policyModelURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/secVGU#C3.json";
-    final String queryModelURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/vgu_query.json";
+    final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
+    final String policyModelURI = "sncs2021_evaluation/secVGU#C3.json";
+    final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
 
     // ouput
-    final String databaseSchemaURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/result/db.sql";
-    final String sqlAuthFuncURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/result/secVGU#X3.sql";
-    final String authProcOutputURI = "/home/pj/SQLSI_v4/sncs2021_evaluation/result/secProc.sql";
+    final String databaseSchemaURI = "sncs2021_evaluation/result/db.sql";
+    final String sqlAuthFuncURI = "sncs2021_evaluation/result/secVGU#X3.sql";
+    final String authProcOutputURI = "sncs2021_evaluation/result/secProc.sql";
     // final String dataModelURI = "fdse2020_demo/vgu_dm.json";
     // final String databaseSchemaURI = "fdse2020_demo/uni.sql";
     // final String policyModelURI = "fdse2020_demo/vguA.json";
