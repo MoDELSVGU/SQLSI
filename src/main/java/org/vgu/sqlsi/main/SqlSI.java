@@ -83,9 +83,9 @@ public class SqlSI {
 
   public void run(String queryModelURI, String schemaoutputURI, String authFuncOutputURI, String authProcOutputURI)
       throws FileNotFoundException, IOException, ParseException, Exception {
-    SqlSIGenDatabase(schemaoutputURI);
-    SqlSIGenAuthFunc(authFuncOutputURI);
-    SqlSIGenSecQuery(authProcOutputURI);
+    SqlSIGenDatabase(schemaoutputURI); // db.sql
+    SqlSIGenAuthFunc(authFuncOutputURI); // secVGU
+    SqlSIGenSecQuery(authProcOutputURI); // secProc.sql
   }
 
   public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri) throws Exception {
@@ -145,7 +145,8 @@ public class SqlSI {
       throws IOException, ParseException, FileNotFoundException {
     File policyFile = new File(securityModelURI);
     JSONArray secureUMLJSONArray = (JSONArray) new JSONParser().parse(new FileReader(policyFile));
-    SecurityModel secureUML = new SecurityModel(secureUMLJSONArray);
+
+    org.vgu.sqlsi.sec.model.SecurityModel secureUML = new org.vgu.sqlsi.sec.model.SecurityModel(secureUMLJSONArray);
     return secureUML;
   }
 
