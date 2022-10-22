@@ -50,9 +50,8 @@ public class Template {
       "DECLARE EXIT HANDLER FOR SQLEXCEPTION\r\n" +
       "BEGIN\r\n" +
       "  SET _rollback = 1;\r\n" +
-      "  GET DIAGNOSTICS CONDITION 1 @p1 = RETURNED_SQLSTATE, @p2 = MESSAGE_TEXT;\r\n" +
-      "  SELECT @p1, @p2;\r\n" +
       "  ROLLBACK;\r\n" +
+      "  RESIGNAL;\r\n" +
       "END;\r\n" +
       "START TRANSACTION;\r\n" +
       "%1$s" +
