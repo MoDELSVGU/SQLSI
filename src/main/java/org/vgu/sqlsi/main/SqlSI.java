@@ -81,9 +81,10 @@ public class SqlSI {
     return queriesModel;
   }
 
-  public void run(String queryModelURI, String schemaoutputURI, String authFuncOutputURI, String authProcOutputURI)
+  public void run(String schemaName, String queryModelURI, String schemaoutputURI, String authFuncOutputURI,
+      String authProcOutputURI)
       throws FileNotFoundException, IOException, ParseException, Exception {
-    SqlSIGenDatabase(schemaoutputURI); // db.sql
+    SqlSIGenDatabase(schemaoutputURI, schemaName); // db.sql
     SqlSIGenAuthFunc(authFuncOutputURI); // secVGU
     SqlSIGenSecQuery(authProcOutputURI); // secProc.sql
   }
@@ -158,10 +159,10 @@ public class SqlSI {
     return context;
   }
 
-  public void SqlSIGenDatabase(String sqlschemaoutputuri) throws IOException {
+  public void SqlSIGenDatabase(String sqlschemaoutputuri, String schemaName) throws IOException {
     File dbGenFile = new File(sqlschemaoutputuri);
     FileWriter fileWriter = new FileWriter(dbGenFile);
-    String sqlScript = DM2Schema.generateDatabase(this.dataModel, SQLSIConfiguration.SCHEMANAME);
+    String sqlScript = DM2Schema.generateDatabase(this.dataModel, schemaName);
     try {
       fileWriter.write(sqlScript);
     } catch (IOException e) {

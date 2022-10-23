@@ -55,7 +55,7 @@ public class Main {
     sqlsi.setQueryModel(queryModelURI);
     sqlsi.setSecurityModel(policyModelURI);
 
-    sqlsi.run(queryModelURI, databaseSchemaURI, sqlAuthFuncURI, authProcOutputURI);
+    sqlsi.run("mydb", queryModelURI, databaseSchemaURI, sqlAuthFuncURI, authProcOutputURI);
 
   }
 }
