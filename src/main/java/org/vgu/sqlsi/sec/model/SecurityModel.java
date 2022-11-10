@@ -25,33 +25,33 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class SecurityModel {
-    private List<Rule> rules;
-    
-    public List<Rule> getRules() {
-        return rules;
-    }
+  private List<Rule> rules;
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
+  public List<Rule> getRules() {
+    return rules;
+  }
 
-    @Override
-    public String toString() {
-        return "SecPolicyModel [rules=" + rules + "]";
-    }
+  public void setRules(List<Rule> rules) {
+    this.rules = rules;
+  }
 
-    public SecurityModel(List<Rule> rules) {
-        this.rules = rules;
-    }
-    
-    public SecurityModel(JSONArray entitiesJSON) {
-        List<Rule> rules = new ArrayList<Rule>();
-        for(Object entityJSON : entitiesJSON) {
-            rules.add(new Rule((JSONObject) entityJSON));
-        }
-        this.rules = rules;
-    }
+  @Override
+  public String toString() {
+    return "SecPolicyModel [rules=" + rules + "]";
+  }
 
-    public SecurityModel() {
+  // public SecurityModel(List<Rule> rules) {
+  // this.rules = rules;
+  // }
+
+  public SecurityModel(JSONArray entitiesJSON) {
+    List<Rule> rules = new ArrayList<Rule>();
+    for (Object entityJSON : entitiesJSON) {
+      rules.add(new Rule((JSONObject) entityJSON));
     }
+    this.rules = rules;
+  }
+
+  public SecurityModel() {
+  }
 }

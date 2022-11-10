@@ -16,17 +16,17 @@ limitations under the License.
 @author: ngpbh
 ***************************************************************************/
 
-package main;
+package org.vgu.sqlsi.main;
 
 public class SQLSIConfiguration {
-	public static final String SCHEMANAME = "mydb";
-	public static final String SECQUERYNAME = "secquery";
-	public static final String PARAM_PREFIX = "_";
-	public static final String PARAM_TYPE = "varchar(250)";
+  // public static final String SCHEMANAME = "mydb";
+  public static final String SECQUERYNAME = "secquery";
+  public static final String PARAM_PREFIX = "_";
+  public static final String PARAM_TYPE = "varchar(250)";
 
-	public static final String SELF = PARAM_PREFIX + "self";
-	public static final String CALLER = PARAM_PREFIX + "caller";
-	public static final String TARGET = PARAM_PREFIX + "target";
-	public static final String VALUE = PARAM_PREFIX + "value";
-	public static final String ROLE = PARAM_PREFIX + "role";
+  public static final String SELF = PARAM_PREFIX + "self";
+  public static final String CALLER = PARAM_PREFIX + "caller";
+  public static final String TARGET = PARAM_PREFIX + "target";
+  public static final String VALUE = PARAM_PREFIX + "value";
+  public static final String ROLE = PARAM_PREFIX + "role";
 }
