@@ -13,11 +13,11 @@
 		],
 		"ends": [
 			{
-				"association": "Enrollment",
+				"association": "Contact",
 				"name": "students",
 				"target": "Student",
 				"opp": "lecturers",
-				"mult": "*"
+				"mult": "1"
 			}
 		]
 	},
@@ -35,11 +35,54 @@
 		],
 		"ends": [
 			{
-				"association": "Enrollment",
+				"association": "Contact",
 				"name": "lecturers",
 				"target": "Lecturer",
 				"opp": "students",
 				"mult": "*"
+			}
+		]
+	},
+	{
+		"association-class": "Enrollment",
+		"attributes": [
+			{
+				"name": "name",
+				"type": "String"
+			}
+		],
+		"ends": [
+			{
+				"name": "lecturers",
+				"target": "Lecturer",
+			},
+			{
+				"name": "students",
+				"target": "Student",
+			}
+		]
+	},
+	{
+		"class": "Module",
+		"attributes": [
+			{
+				"name": "code",
+				"type": "Integer"
+			},
+		],
+		"ends": []
+	},
+	{
+		"association-class": "Enrollment_Module",
+		"attributes": [],
+		"ends": [
+			{
+				"name": "enrollment",
+				"target": "Enrollment"
+			},
+			{
+				"name": "module",
+				"target": "Module"
 			}
 		]
 	}
