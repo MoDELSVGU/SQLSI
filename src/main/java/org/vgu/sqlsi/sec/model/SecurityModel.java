@@ -18,39 +18,46 @@
 
 package org.vgu.sqlsi.sec.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
+/**
+ * Represent the security policy model that is specified in policyModelURI. The policyModelURI
+ * points to a JSON file that contains a JSON array with each element of an array is a specific
+ * rule.
+ */
 public class SecurityModel {
-    private List<Rule> rules;
+  private List<Rule> rules;
 
-    public List<Rule> getRules() {
-        return rules;
+  public List<Rule> getRules() {
+    return rules;
+  }
+
+  public void setRules(List<Rule> rules) {
+    this.rules = rules;
+  }
+
+  @Override
+  public String toString() {
+    String ruleString =
+        this.rules.stream().map(rule -> rule.toString()).collect(Collectors.joining(","));
+    return "SecPolicyModel [rules=" + ruleString + "]";
+  }
+
+  // public SecurityModel(List<Rule> rules) {
+  //   this.rules = rules;
+  // }
+
+  public SecurityModel(JSONArray entitiesJSON) {
+    List<Rule> rules = new ArrayList<Rule>();
+    for (Object entityJSON : entitiesJSON) {
+      rules.add(new Rule((JSONObject) entityJSON));
     }
+    this.rules = rules;
+  }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
-
-    @Override
-    public String toString() {
-        return "SecPolicyModel [rules=" + rules + "]";
-    }
-
-    // public SecurityModel(List<Rule> rules) {
-    //   this.rules = rules;
-    // }
-
-    public SecurityModel(JSONArray entitiesJSON) {
-        List<Rule> rules = new ArrayList<Rule>();
-        for (Object entityJSON : entitiesJSON) {
-            rules.add(new Rule((JSONObject) entityJSON));
-        }
-        this.rules = rules;
-    }
-
-    public SecurityModel() {}
+  public SecurityModel() {}
 }

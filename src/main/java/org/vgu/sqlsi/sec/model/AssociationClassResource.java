@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author: ngpbh
+ * @author: HuMiTriet
  ***************************************************************************/
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sec.model;
 
-import java.util.List;
+import org.json.simple.JSONObject;
 
-public class AssociationUnitRule extends SecUnitRule {
-  private String association;
+public class AssociationClassResource extends Resource {
+  private String associationClass;
 
-  public String getAssociation() {
-    return association;
+  public AssociationClassResource(JSONObject resourceJson) {
+    this.associationClass = (String) resourceJson.get("association-class");
   }
 
-  public void setAssociation(String association) {
-    this.association = association;
+  public String getAssociationClass() {
+    return associationClass;
   }
 
-  public AssociationUnitRule(
-      String action, String role, List<AuthorizationConstraint> auths, String association) {
-    super(action, role, auths);
-    this.association = association;
+  public void setAssociationClass(String associationClass) {
+    this.associationClass = associationClass;
   }
 
-  public AssociationUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
-    super(action, role, auths);
+  @Override
+  public String toString() {
+    return "AssociationClassResource [associationClass=" + associationClass + "]";
   }
 }

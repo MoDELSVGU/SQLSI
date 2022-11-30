@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.Statement;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,23 +26,24 @@ import org.vgu.sqlsi.utils.FunctionUtils;
 import org.vgu.sqlsi.utils.PrintingUtils;
 import org.vgu.sqlsi.utils.SQLSIUtils;
 
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statement;
-
+/** Class that is used to execute the SQLSI tool. * */
 public class SqlSI {
   private DataModel dataModel;
   private SecurityModel securityModel;
   private List<QueryModel> queriesModel;
 
-  public void setDataModel(String url) throws FileNotFoundException, IOException, ParseException, Exception {
+  public void setDataModel(String url)
+      throws FileNotFoundException, IOException, ParseException, Exception {
     this.dataModel = transformDataModel(url);
   }
 
-  public void setSecurityModel(String url) throws FileNotFoundException, IOException, ParseException, Exception {
+  public void setSecurityModel(String url)
+      throws FileNotFoundException, IOException, ParseException, Exception {
     this.securityModel = transformSecurityModel(url);
   }
 
-  public void setQueryModel(String url) throws FileNotFoundException, IOException, ParseException, Exception {
+  public void setQueryModel(String url)
+      throws FileNotFoundException, IOException, ParseException, Exception {
     this.queriesModel = transformQueriesModel(url);
   }
 
@@ -81,7 +83,15 @@ public class SqlSI {
     return queriesModel;
   }
 
-  public void run(String schemaName, String queryModelURI, String schemaoutputURI, String authFuncOutputURI,
+  /**
+   * The main method of SQLSI that is used to generate all of the resulting sql files. This method
+   * is analogous to the SecQuery(S, q) method which is mentioned in the original paper.
+   */
+  public void run(
+      String schemaName,
+      String queryModelURI,
+      String schemaoutputURI,
+      String authFuncOutputURI,
       String authProcOutputURI)
       throws FileNotFoundException, IOException, ParseException, Exception {
     SqlSIGenDatabase(schemaoutputURI, schemaName); // db.sql
@@ -109,7 +119,8 @@ public class SqlSI {
     fileWriter.close();
   }
 
-  public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri, String statement) throws Exception {
+  public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri, String statement)
+      throws Exception {
     File secQueryFile = new File(sqlstoredprocedureoutputuri);
     FileWriter fileWriter = new FileWriter(secQueryFile);
     Stack<SQLTemporaryTable> temps = genSecProc(statement, null, null);
@@ -127,7 +138,8 @@ public class SqlSI {
     fileWriter.close();
   }
 
-  private Stack<SQLTemporaryTable> genSecProc(String statement, JSONArray vars, JSONArray pars) throws Exception {
+  private Stack<SQLTemporaryTable> genSecProc(String statement, JSONArray vars, JSONArray pars)
+      throws Exception {
 
     Statement statementSql = CCJSqlParserUtil.parse(statement);
 
@@ -147,14 +159,16 @@ public class SqlSI {
     File policyFile = new File(securityModelURI);
     JSONArray secureUMLJSONArray = (JSONArray) new JSONParser().parse(new FileReader(policyFile));
 
-    org.vgu.sqlsi.sec.model.SecurityModel secureUML = new org.vgu.sqlsi.sec.model.SecurityModel(secureUMLJSONArray);
+    org.vgu.sqlsi.sec.model.SecurityModel secureUML =
+        new org.vgu.sqlsi.sec.model.SecurityModel(secureUMLJSONArray);
     return secureUML;
   }
 
   private DataModel transformDataModel(String dataModelURI)
       throws IOException, ParseException, FileNotFoundException, Exception {
     File dataModelFile = new File(dataModelURI);
-    JSONArray dataModelJSONArray = (JSONArray) new JSONParser().parse(new FileReader(dataModelFile));
+    JSONArray dataModelJSONArray =
+        (JSONArray) new JSONParser().parse(new FileReader(dataModelFile));
     DataModel context = new DataModel(dataModelJSONArray);
     return context;
   }
@@ -173,11 +187,20 @@ public class SqlSI {
     }
   }
 
+  /**
+   * Generates the helper authorization function that is used in the generated stored procedures.
+   */
   public List<AuthFunc> SqlSIGenAuthFunc(String sqlauthfunctionoutputuri) throws Exception {
+
     File funGenFile = new File(sqlauthfunctionoutputuri);
     FileWriter fileWriter = new FileWriter(funGenFile);
+
+    // getting the throw error function
     String throwErrorFunc = PrintingUtils.printThrowErrorFunc();
+
+    // the actual list of Auth functions
     List<AuthFunc> functions = FunctionUtils.printAuthFun(dataModel, securityModel);
+
     try {
       fileWriter.write(throwErrorFunc);
       for (AuthFunc function : functions) {

@@ -1,17 +1,18 @@
 /**************************************************************************
  * Copyright 2020 Vietnamese-German-University
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * <p>Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * You may obtain a copy of the License at </p>
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>http://www.apache.org/licenses/LICENSE-2.0</p>
  *
- * Unless required by applicable law or agreed to in writing, software
+ * <p>Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * </p>
  *
  * @author: ngpbh
  ***************************************************************************/
@@ -20,10 +21,23 @@ package org.vgu.sqlsi.sec.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.vgu.sqlsi.sec.SecResourceFactory;
 
+/**
+ * Represents each rule in the security policy model. Each rule contains:
+ *
+ * <ul>
+ *   <li>roles: to whom the rules applies to.
+ *   <li>resources: the resources that the rule applies to.
+ *   <li>auth: the autorization constraints that will be checked
+ * </ul>
+ *
+ * <p>By default the authroization constaint is to deniy access to the resource. So each rule only
+ * need to speicify the allow cases.
+ */
 public class Rule {
   private List<Role> roles;
   private List<Action> actions;
@@ -110,4 +124,31 @@ public class Rule {
   }
 
   public Rule() {}
+
+  @Override
+  public String toString() {
+    String roleString =
+        this.roles.stream().map(role -> role.toString()).collect(Collectors.joining(", "));
+
+    String actionString =
+        this.actions.stream().map(action -> action.toString()).collect(Collectors.joining(", "));
+
+    String resourceString =
+        this.resources.stream()
+            .map(resource -> resource.toString())
+            .collect(Collectors.joining(", "));
+
+    String authString =
+        this.auth.stream().map(auth -> auth.getSql()).collect(Collectors.joining(", "));
+
+    return "Rule [roles="
+        + roleString
+        + ", actions="
+        + actionString
+        + ", resources="
+        + resourceString
+        + ", auth="
+        + authString
+        + "]";
+  }
 }

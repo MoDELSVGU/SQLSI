@@ -16,28 +16,14 @@
  * @author: ngpbh
  ***************************************************************************/
 
-package org.vgu.sqlsi.sec;
+package org.vgu.sqlsi.sql.select;
 
-import java.util.List;
+import net.sf.jsqlparser.statement.select.SelectVisitor;
 
-public class AssociationUnitRule extends SecUnitRule {
-  private String association;
+public class SelectBasicAssociationClass extends SelectSQLSI {
 
-  public String getAssociation() {
-    return association;
-  }
-
-  public void setAssociation(String association) {
-    this.association = association;
-  }
-
-  public AssociationUnitRule(
-      String action, String role, List<AuthorizationConstraint> auths, String association) {
-    super(action, role, auths);
-    this.association = association;
-  }
-
-  public AssociationUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
-    super(action, role, auths);
+  @Override
+  public void accept(SelectVisitor selectVisitor) {
+    selectVisitor.visit(this);
   }
 }

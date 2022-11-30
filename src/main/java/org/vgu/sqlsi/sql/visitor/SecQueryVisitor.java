@@ -2,12 +2,6 @@ package org.vgu.sqlsi.sql.visitor;
 
 import java.util.List;
 import java.util.Stack;
-
-import org.json.simple.JSONArray;
-import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.sqlsi.sql.func.AuthFunc;
-import org.vgu.sqlsi.sql.temptable.SQLTemporaryTable;
-
 import net.sf.jsqlparser.statement.Block;
 import net.sf.jsqlparser.statement.Commit;
 import net.sf.jsqlparser.statement.DeclareStatement;
@@ -37,211 +31,215 @@ import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import net.sf.jsqlparser.statement.values.ValuesStatement;
+import org.json.simple.JSONArray;
+import org.vgu.dm2schema.dm.DataModel;
+import org.vgu.sqlsi.sql.func.AuthFunc;
+import org.vgu.sqlsi.sql.temptable.SQLTemporaryTable;
 
 public class SecQueryVisitor implements StatementVisitor {
-    private DataModel dataModel;
-    public DataModel getDataModel() {
-        return dataModel;
-    }
+  private DataModel dataModel;
 
-    public void setDataModel(DataModel dataModel) {
-        this.dataModel = dataModel;
-    }
+  public DataModel getDataModel() {
+    return dataModel;
+  }
 
-    private List<AuthFunc> functions;
-    private JSONArray parameters;
-    private Stack<SQLTemporaryTable> result = new Stack<SQLTemporaryTable>();
+  public void setDataModel(DataModel dataModel) {
+    this.dataModel = dataModel;
+  }
 
-    public JSONArray getParameters() {
-        return parameters;
-    }
+  private List<AuthFunc> functions;
+  private JSONArray parameters;
+  private Stack<SQLTemporaryTable> result = new Stack<SQLTemporaryTable>();
 
-    public void setParameters(JSONArray parameters) {
-        this.parameters = parameters;
-    }
+  public JSONArray getParameters() {
+    return parameters;
+  }
 
-    public List<AuthFunc> getFunctions() {
-        return functions;
-    }
+  public void setParameters(JSONArray parameters) {
+    this.parameters = parameters;
+  }
 
-    public void setFunctions(List<AuthFunc> functions) {
-        this.functions = functions;
-    }
+  public List<AuthFunc> getFunctions() {
+    return functions;
+  }
 
-    public Stack<SQLTemporaryTable> getResult() {
-        return result;
-    }
+  public void setFunctions(List<AuthFunc> functions) {
+    this.functions = functions;
+  }
 
-    public void setResult(Stack<SQLTemporaryTable> result) {
-        this.result = result;
-    }
+  public Stack<SQLTemporaryTable> getResult() {
+    return result;
+  }
 
-    @Override
-    public void visit(Commit commit) {
-        // TODO Auto-generated method stub
+  public void setResult(Stack<SQLTemporaryTable> result) {
+    this.result = result;
+  }
 
-    }
+  @Override
+  public void visit(Commit commit) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Delete delete) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Delete delete) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Update update) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Update update) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Insert insert) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Insert insert) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Replace replace) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Replace replace) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Drop drop) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Drop drop) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Truncate truncate) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Truncate truncate) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(CreateIndex createIndex) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(CreateIndex createIndex) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(CreateTable createTable) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(CreateTable createTable) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(CreateView createView) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(CreateView createView) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(AlterView alterView) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(AlterView alterView) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Alter alter) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Alter alter) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Statements stmts) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Statements stmts) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Execute execute) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Execute execute) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(SetStatement set) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(SetStatement set) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Merge merge) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Merge merge) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Select select) {
-        SelectInjector injector = new SelectInjector();
-        injector.setAction("READ");
-        injector.setFunctions(functions);
-        injector.setParameters(this.getParameters());
-        injector.setDataModel(dataModel);
-        SelectBody selectBody = select.getSelectBody();
-        selectBody.accept(injector);
-        this.getResult().addAll(injector.getResults());
-    }
+  }
 
-    @Override
-    public void visit(Upsert upsert) {
-        // TODO Auto-generated method stub
+  @Override
+  public void visit(Select select) {
+    SelectInjector injector = new SelectInjector();
+    injector.setAction("READ");
+    injector.setFunctions(functions);
+    injector.setParameters(this.getParameters());
+    injector.setDataModel(dataModel);
+    SelectBody selectBody = select.getSelectBody();
+    selectBody.accept(injector);
+    this.getResult().addAll(injector.getResults());
+  }
 
-    }
+  @Override
+  public void visit(Upsert upsert) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(UseStatement use) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(UseStatement use) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Comment arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Comment arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(ShowColumnsStatement arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(ShowColumnsStatement arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(Block arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(Block arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(ValuesStatement arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(ValuesStatement arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(DescribeStatement arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(DescribeStatement arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(ExplainStatement arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(ExplainStatement arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(ShowStatement arg0) {
-        // TODO Auto-generated method stub
+  }
 
-    }
+  @Override
+  public void visit(ShowStatement arg0) {
+    // TODO Auto-generated method stub
 
-    @Override
-    public void visit(DeclareStatement aThis) {
-        // TODO Auto-generated method stub
-        
-    }
+  }
 
+  @Override
+  public void visit(DeclareStatement aThis) {
+    // TODO Auto-generated method stub
+
+  }
 }

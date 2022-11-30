@@ -1,0 +1,22 @@
+[
+	{
+		"roles": [
+			"Admin"
+		],
+		"actions": [
+			"read"
+		],
+		"resources": [
+			{
+				"entity": "faculty",
+				"attribute": "name"
+			}
+		],
+		"auth": [
+			{
+				"ocl": "true",
+				"sql": "TRUE"
+			}
+		]
+	}
+]

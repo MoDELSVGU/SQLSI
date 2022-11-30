@@ -1,89 +1,46 @@
 [
-	{
-		"class": "Lecturer",
-		"attributes": [
-			{
-				"name": "name",
-				"type": "String"
-			},
-			{
-				"name": "age",
-				"type": "Integer"
-			}
-		],
-		"ends": [
-			{
-				"association": "Contact",
-				"name": "students",
-				"target": "Student",
-				"opp": "lecturers",
-				"mult": "1"
-			}
-		]
-	},
-	{
-		"class": "Student",
-		"attributes": [
-			{
-				"name": "name",
-				"type": "String"
-			},
-			{
-				"name": "age",
-				"type": "Integer"
-			}
-		],
-		"ends": [
-			{
-				"association": "Contact",
-				"name": "lecturers",
-				"target": "Lecturer",
-				"opp": "students",
-				"mult": "*"
-			}
-		]
-	},
-	{
-		"association-class": "Enrollment",
-		"attributes": [
-			{
-				"name": "name",
-				"type": "String"
-			}
-		],
-		"ends": [
-			{
-				"name": "lecturers",
-				"target": "Lecturer",
-			},
-			{
-				"name": "students",
-				"target": "Student",
-			}
-		]
-	},
-	{
-		"class": "Module",
-		"attributes": [
-			{
-				"name": "code",
-				"type": "Integer"
-			},
-		],
-		"ends": []
-	},
-	{
-		"association-class": "Enrollment_Module",
-		"attributes": [],
-		"ends": [
-			{
-				"name": "enrollment",
-				"target": "Enrollment"
-			},
-			{
-				"name": "module",
-				"target": "Module"
-			}
-		]
-	}
+  {
+    "class": "Lecturer",
+    "attributes": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "age",
+        "type": "Integer"
+      }
+    ],
+    "ends": [
+      {
+        "association": "Enrollment",
+        "name": "students",
+        "target": "Student",
+        "opp": "lecturers",
+        "mult": "1"
+      }
+    ]
+  },
+  {
+    "class": "Student",
+    "attributes": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "age",
+        "type": "Integer"
+      }
+    ],
+    "ends": [
+      {
+        "association": "Enrollment",
+        "name": "lecturers",
+        "target": "Lecturer",
+        "opp": "students",
+        "mult": "*"
+      }
+    ]
+  }
 ]

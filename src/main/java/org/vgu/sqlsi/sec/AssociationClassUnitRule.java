@@ -13,31 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author: ngpbh
+ * @author: HuMiTriet
  ***************************************************************************/
-
 package org.vgu.sqlsi.sec;
 
 import java.util.List;
 
-public class AssociationUnitRule extends SecUnitRule {
-  private String association;
+public class AssociationClassUnitRule extends SecUnitRule {
+  private String associationClass;
 
-  public String getAssociation() {
-    return association;
-  }
-
-  public void setAssociation(String association) {
-    this.association = association;
-  }
-
-  public AssociationUnitRule(
-      String action, String role, List<AuthorizationConstraint> auths, String association) {
+  public AssociationClassUnitRule(
+      String action, String role, List<AuthorizationConstraint> auths, String associationClass) {
     super(action, role, auths);
-    this.association = association;
+    this.associationClass = associationClass;
   }
 
-  public AssociationUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
+  public AssociationClassUnitRule(String action, String role, List<AuthorizationConstraint> auths) {
     super(action, role, auths);
+  }
+
+  public String getAssociationClass() {
+    return associationClass;
+  }
+
+  public void setAssociationClass(String associationClass) {
+    this.associationClass = associationClass;
   }
 }

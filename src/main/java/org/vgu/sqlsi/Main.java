@@ -1,10 +1,9 @@
 package org.vgu.sqlsi;
 
-import org.json.simple.parser.ParseException;
-import org.vgu.sqlsi.main.SqlSI;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import org.json.simple.parser.ParseException;
+import org.vgu.sqlsi.main.SqlSI;
 
 /**************************************************************************
  * Copyright 2020 Vietnamese-German-University
@@ -25,35 +24,35 @@ import java.io.IOException;
  ***************************************************************************/
 
 public class Main {
-    public static void main(String[] args)
-            throws FileNotFoundException, IOException, ParseException, Exception {
-        // input
-        final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
-        final String policyModelURI = "sncs2021_evaluation/secVGU#C3.json";
-        final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
+  public static void main(String[] args)
+      throws FileNotFoundException, IOException, ParseException, Exception {
+    // input
+    final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
+    final String policyModelURI = "sncs2021_evaluation/vgu_policy.json";
+    final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
 
-        // ouput
-        final String databaseSchemaURI = "sncs2021_evaluation/result/db.sql";
-        final String sqlAuthFuncURI = "sncs2021_evaluation/result/secVGU#X3.sql";
-        final String authProcOutputURI = "sncs2021_evaluation/result/secProc.sql";
-        // final String dataModelURI = "fdse2020_demo/vgu_dm.json";
-        // final String databaseSchemaURI = "fdse2020_demo/uni.sql";
-        // final String policyModelURI = "fdse2020_demo/vguA.json";
-        // final String sqlAuthFuncURI = "fdse2020_demo/uni_sec.sql";
-        // final String queryModelURI = "fdse2020_demo/vgu_query.json";
-        // final String authProcOutputURI = "fdse2020_demo/uni_secProc.sql";
-        SqlSI sqlsi = new SqlSI();
+    // ouput
+    final String databaseSchemaURI = "sncs2021_evaluation/result/db.sql";
+    final String sqlAuthFuncURI = "sncs2021_evaluation/result/authFunc.sql";
+    final String authProcOutputURI = "sncs2021_evaluation/result/secProc.sql";
+    // final String dataModelURI = "fdse2020_demo/vgu_dm.json";
+    // final String databaseSchemaURI = "fdse2020_demo/uni.sql";
+    // final String policyModelURI = "fdse2020_demo/vguA.json";
+    // final String sqlAuthFuncURI = "fdse2020_demo/uni_sec.sql";
+    // final String queryModelURI = "fdse2020_demo/vgu_query.json";
+    // final String authProcOutputURI = "fdse2020_demo/uni_secProc.sql";
+    SqlSI sqlsi = new SqlSI();
 
-        // sqlsi.setUpDataModelFromURL(dataModelURI);
-        // sqlsi.generateDBSchema(databaseSchemaURI, schemaName);
-        // sqlsi.setUpSecurityModelFromURL(policyModelURI);
+    // sqlsi.setUpDataModelFromURL(dataModelURI);
+    // sqlsi.generateDBSchema(databaseSchemaURI, schemaName);
+    // sqlsi.setUpSecurityModelFromURL(policyModelURI);
 
-        // sqlsi.generateSQLAuthFunctions(sqlAuthFuncURI);
+    // sqlsi.generateSQLAuthFunctions(sqlAuthFuncURI);
 
-        sqlsi.setDataModel(dataModelURI);
-        sqlsi.setQueryModel(queryModelURI);
-        sqlsi.setSecurityModel(policyModelURI);
+    sqlsi.setDataModel(dataModelURI);
+    sqlsi.setQueryModel(queryModelURI);
+    sqlsi.setSecurityModel(policyModelURI);
 
-        sqlsi.run("mydb", queryModelURI, databaseSchemaURI, sqlAuthFuncURI, authProcOutputURI);
-    }
+    sqlsi.run("mydb", queryModelURI, databaseSchemaURI, sqlAuthFuncURI, authProcOutputURI);
+  }
 }

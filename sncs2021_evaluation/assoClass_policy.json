@@ -1,0 +1,21 @@
+[
+  {
+    "roles": [
+      "Admin"
+    ],
+    "actions": [
+      "read"
+    ],
+    "resources": [
+      {
+        "association-class": "academic_year_faculty",
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  }
+]

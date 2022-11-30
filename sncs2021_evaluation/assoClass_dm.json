@@ -1,0 +1,47 @@
+[
+  {
+    "class": "academic_year",
+    "attributes": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "code",
+        "type": "String"
+      }
+    ]
+  },
+  {
+    "class": "faculty",
+    "attributes": [
+      {
+        "name": "name",
+        "type": "String"
+      },
+      {
+        "name": "code",
+        "type": "String"
+      }
+    ]
+  },
+  {
+    "association-class": "academic_year_faculty",
+    "attributes": [
+      {
+        "name": "comment",
+        "type": "String"
+      }
+    ],
+    "ends": [
+      {
+        "name": "academic_year",
+        "target": "academic_year"
+      },
+      {
+        "name": "faculty",
+        "target": "faculty"
+      }
+    ]
+  }
+]

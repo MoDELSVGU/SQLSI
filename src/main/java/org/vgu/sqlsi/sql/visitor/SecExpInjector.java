@@ -2,14 +2,6 @@ package org.vgu.sqlsi.sql.visitor;
 
 import java.util.Arrays;
 import java.util.List;
-
-import org.json.simple.JSONArray;
-import org.vgu.dm2schema.dm.Association;
-import org.vgu.dm2schema.dm.DataModel;
-import org.vgu.sqlsi.sql.func.AuthFunc;
-import org.vgu.sqlsi.utils.SQLSIUtils;
-
-import org.vgu.sqlsi.main.SQLSIConfiguration;
 import net.sf.jsqlparser.expression.AllComparisonExpression;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
@@ -85,6 +77,12 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.SubSelect;
+import org.json.simple.JSONArray;
+import org.vgu.dm2schema.dm.Association;
+import org.vgu.dm2schema.dm.DataModel;
+import org.vgu.sqlsi.main.SQLSIConfiguration;
+import org.vgu.sqlsi.sql.func.AuthFunc;
+import org.vgu.sqlsi.utils.SQLSIUtils;
 
 public class SecExpInjector implements ExpressionVisitor {
   private JSONArray parameters;
@@ -377,7 +375,6 @@ public class SecExpInjector implements ExpressionVisitor {
     isNullExpression.setLeftExpression(leftInjectorExpression.getResult());
 
     this.setResult(isNullExpression);
-
   }
 
   @Override
@@ -409,7 +406,6 @@ public class SecExpInjector implements ExpressionVisitor {
     minorThan.setRightExpression(rightInjectorExpression.getResult());
 
     this.setResult(minorThan);
-
   }
 
   @Override
@@ -487,14 +483,19 @@ public class SecExpInjector implements ExpressionVisitor {
       CaseExpression siCase = new CaseExpression();
       Function function = new Function();
       try {
-        AuthFunc secFunction = SQLSIUtils.findAuthFunctionAttribute(functions, columnName, tableName);
+        AuthFunc secFunction =
+            SQLSIUtils.findAuthFunctionAttribute(functions, columnName, tableName);
         function.setName(secFunction.getFunctionName());
       } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      ExpressionList expList = new ExpressionList(Arrays.asList(new Column(SQLSIConfiguration.CALLER),
-          new Column(SQLSIConfiguration.ROLE), new Column(String.format("%s_id", tableName))));
+      ExpressionList expList =
+          new ExpressionList(
+              Arrays.asList(
+                  new Column(SQLSIConfiguration.CALLER),
+                  new Column(SQLSIConfiguration.ROLE),
+                  new Column(String.format("%s_id", tableName))));
       function.setParameters(expList);
       siCase.setSwitchExpression(function);
       WhenClause whenClause = new WhenClause();
@@ -510,17 +511,21 @@ public class SecExpInjector implements ExpressionVisitor {
       Function function = new Function();
       // TODO: Implement this!
       try {
-        AuthFunc secFunction = SQLSIUtils.findAuthFunctionAssociation(dataModel, functions, columnName,
-            tableName);
+        AuthFunc secFunction =
+            SQLSIUtils.findAuthFunctionAssociation(dataModel, functions, columnName, tableName);
         function.setName(secFunction.getFunctionName());
       } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
       Association association = SQLSIUtils.getAssociation(dataModel, tableName);
-      ExpressionList expList = new ExpressionList(
-          Arrays.asList(new Column(SQLSIConfiguration.CALLER), new Column(SQLSIConfiguration.ROLE),
-              new Column(association.getLeftEnd()), new Column(association.getRightEnd())));
+      ExpressionList expList =
+          new ExpressionList(
+              Arrays.asList(
+                  new Column(SQLSIConfiguration.CALLER),
+                  new Column(SQLSIConfiguration.ROLE),
+                  new Column(association.getLeftEnd()),
+                  new Column(association.getRightEnd())));
       function.setParameters(expList);
       siCase.setSwitchExpression(function);
       WhenClause whenClause = new WhenClause();
@@ -780,5 +785,4 @@ public class SecExpInjector implements ExpressionVisitor {
     // TODO Auto-generated method stub
 
   }
-
 }

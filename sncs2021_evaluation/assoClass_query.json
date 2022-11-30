@@ -4,7 +4,7 @@
     "pars": [],
     "vars": [],
     "body": [
-      "SELECT * FROM Enrollment"
+      "SELECT * FROM academic_year_faculty"
     ]
   }
 ]
