@@ -23,8 +23,15 @@ import org.json.simple.JSONObject;
 public class AssociationClassResource extends Resource {
   private String associationClass;
 
+  // private Set<AttributeResource> attributes = new HashSet<>();
+
   public AssociationClassResource(JSONObject resourceJson) {
     this.associationClass = (String) resourceJson.get("association-class");
+    // check if there is an attribute in resourceJson if yes then add to attributes
+    // if (resourceJson.containsKey("attribute")) {
+    //   this.attributes.add(
+    //       new AttributeResource(this.associationClass, (String) resourceJson.get("attribute")));
+    // }
   }
 
   public String getAssociationClass() {
@@ -37,6 +44,13 @@ public class AssociationClassResource extends Resource {
 
   @Override
   public String toString() {
-    return "AssociationClassResource [associationClass=" + associationClass + "]";
+    // String attributeString =
+    //     this.attributes.stream().map(AttributeResource::toString).collect(Collectors.joining(",
+    // "));
+    return "AssociationClassResource [associationClass="
+        + associationClass
+        // + ", attributes="
+        // + attributeString
+        + "]";
   }
 }

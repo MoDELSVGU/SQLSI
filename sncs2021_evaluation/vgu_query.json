@@ -4,7 +4,7 @@
     "pars": [],
     "vars": [],
     "body": [
-      "SELECT * FROM Enrollment"
+      "SELECT name FROM Student WHERE age > 18"
     ]
   }
 ]

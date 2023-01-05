@@ -28,7 +28,6 @@ import org.vgu.dm2schema.dm.AssociationClass;
 import org.vgu.dm2schema.dm.Attribute;
 import org.vgu.dm2schema.dm.DataModel;
 import org.vgu.dm2schema.dm.Entity;
-import org.vgu.sqlsi.sec.AssociationClassUnitRule;
 import org.vgu.sqlsi.sec.AssociationUnitRule;
 import org.vgu.sqlsi.sec.AttributeUnitRule;
 import org.vgu.sqlsi.sec.AuthorizationConstraint;
@@ -86,10 +85,27 @@ public class FunctionUtils {
     return functions;
   }
 
+  /**
+   * Since AssociationClass has attribute of their there must also be coressponding authorization
+   * functions corresponding to those attributes.
+   *
+   * @author HuMiTriet
+   */
   private static Collection<? extends AuthFunc> getAuthFun(
       AssociationClass associationClass, List<SecUnitRule> rules) {
     List<AuthFunc> functions = new ArrayList<AuthFunc>();
+
     functions.add(getAuthFunFromAssociationClass("READ", associationClass, rules));
+
+    associationClass
+        .getAttributes()
+        .forEach(
+            associationClassAttribute -> {
+              functions.add(
+                  getAuthFunFromAttribute(
+                      "READ", associationClass, associationClassAttribute, rules));
+            });
+
     return functions;
   }
 
@@ -117,6 +133,46 @@ public class FunctionUtils {
                 .map(SecUnitRule::getAuths)
                 .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
                 .collect(Collectors.toList()));
+        sqlAuthRoleFunction.setSql(
+            ruleRoleBased.stream()
+                .map(SecUnitRule::getAuths)
+                .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
+                .collect(Collectors.toList()));
+        sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
+      }
+    }
+    return sqlAuthFunction;
+  }
+
+  private static AuthFunc getAuthFunFromAttribute(
+      String action,
+      AssociationClass associationClass,
+      Attribute attribute,
+      List<SecUnitRule> rules) {
+    HashMap<String, List<SecUnitRule>> indexRules =
+        filterAndIndexRules(action, associationClass, attribute, rules);
+
+    String authFunName =
+        String.format("%1$s_%2$s", associationClass.getName(), attribute.getName());
+
+    AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
+
+    sqlAuthFunction.setParameters(attribute);
+
+    // only add in Authorization constraint if it is said explicitly in the security policy file
+    if (!indexRules.isEmpty()) {
+      for (String role : indexRules.keySet()) {
+
+        AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
+        sqlAuthRoleFunction.setParameters(attribute);
+        List<SecUnitRule> ruleRoleBased = indexRules.get(role);
+
+        sqlAuthRoleFunction.setOcl(
+            ruleRoleBased.stream()
+                .map(SecUnitRule::getAuths)
+                .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
+                .collect(Collectors.toList()));
+
         sqlAuthRoleFunction.setSql(
             ruleRoleBased.stream()
                 .map(SecUnitRule::getAuths)
@@ -188,6 +244,7 @@ public class FunctionUtils {
         sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
       }
     }
+
     return sqlAuthFunction;
   }
 
@@ -204,11 +261,41 @@ public class FunctionUtils {
   public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
       String action, Entity entity, Attribute attribute, List<SecUnitRule> rules) {
     HashMap<String, List<SecUnitRule>> indexRules = new HashMap<>();
+
     if (rules != null) {
       for (SecUnitRule rule : rules) {
         if (rule instanceof AttributeUnitRule) {
           AttributeUnitRule attRule = (AttributeUnitRule) rule;
           if (attRule.getEntity().equals(entity.getName())
+              && attRule.getAttribute().equals(attribute.getName())
+              && attRule.getAction().equals(action)) {
+            if (indexRules.containsKey(rule.getRole())) {
+              // adding to existing role key if it already existed
+              indexRules.get(rule.getRole()).add(rule);
+            } else {
+              // creating new role key if it didn't exist
+              indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
+              indexRules.get(rule.getRole()).add(rule);
+            }
+          }
+        }
+      }
+    }
+    return indexRules;
+  }
+
+  public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(
+      String action,
+      AssociationClass associationClass,
+      Attribute attribute,
+      List<SecUnitRule> rules) {
+    HashMap<String, List<SecUnitRule>> indexRules = new HashMap<>();
+
+    if (rules != null) {
+      for (SecUnitRule rule : rules) {
+        if (rule instanceof AttributeUnitRule) {
+          AttributeUnitRule attRule = (AttributeUnitRule) rule;
+          if (attRule.getEntity().equals(associationClass.getName())
               && attRule.getAttribute().equals(attribute.getName())
               && attRule.getAction().equals(action)) {
             if (indexRules.containsKey(rule.getRole())) {
@@ -261,9 +348,9 @@ public class FunctionUtils {
 
     if (rules != null) {
       for (SecUnitRule rule : rules) {
-        if (rule instanceof AssociationClassUnitRule) {
-          AssociationClassUnitRule attRule = (AssociationClassUnitRule) rule;
-          if (attRule.getAssociationClass().equals(associationClass.getName())
+        if (rule instanceof AssociationUnitRule) {
+          AssociationUnitRule attRule = (AssociationUnitRule) rule;
+          if (attRule.getAssociation().equals(associationClass.getName())
               && attRule.getAction().equals(action)) {
             if (indexRules.containsKey(rule.getRole())) {
               indexRules.get(rule.getRole()).add(rule);

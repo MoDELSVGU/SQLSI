@@ -32,6 +32,8 @@ public class SqlSI {
   private SecurityModel securityModel;
   private List<QueryModel> queriesModel;
 
+  private List<AuthFunc> authFuncs;
+
   public void setDataModel(String url)
       throws FileNotFoundException, IOException, ParseException, Exception {
     this.dataModel = transformDataModel(url);
@@ -96,12 +98,11 @@ public class SqlSI {
       throws FileNotFoundException, IOException, ParseException, Exception {
     SqlSIGenDatabase(schemaoutputURI, schemaName); // db.sql
     SqlSIGenAuthFunc(authFuncOutputURI); // secVGU
-    SqlSIGenSecQuery(authProcOutputURI); // secProc.sql
+    // SqlSIGenSecQuery(authProcOutputURI); // secProc.sql
   }
 
   public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri) throws Exception {
     File secQueryFile = new File(sqlstoredprocedureoutputuri);
-    FileWriter fileWriter = new FileWriter(secQueryFile);
     for (QueryModel qm : this.queriesModel) {
       Stack<SQLTemporaryTable> temps = genSecProc(qm.getStatement(), qm.getVars(), qm.getVars());
       SQLSIStoredProcedure storedProcedure = new SQLSIStoredProcedure();
@@ -109,14 +110,13 @@ public class SqlSI {
       storedProcedure.setComments(qm.getStatement());
       storedProcedure.setTemps(temps);
       String sqlProc = PrintingUtils.printProc(storedProcedure);
-      try {
+
+      try (FileWriter fileWriter = new FileWriter(secQueryFile)) {
         fileWriter.write(sqlProc);
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-    fileWriter.flush();
-    fileWriter.close();
   }
 
   public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri, String statement)
@@ -146,7 +146,7 @@ public class SqlSI {
     SQLSIUtils.classify(statementSql, dataModel);
 
     SecQueryVisitor secQuery = new SecQueryVisitor();
-    secQuery.setFunctions(FunctionUtils.printAuthFun(dataModel, securityModel));
+    secQuery.setFunctions(this.authFuncs);
     secQuery.setParameters(pars);
     secQuery.setDataModel(dataModel);
     statementSql.accept(secQuery);
@@ -175,44 +175,35 @@ public class SqlSI {
 
   public void SqlSIGenDatabase(String sqlschemaoutputuri, String schemaName) throws IOException {
     File dbGenFile = new File(sqlschemaoutputuri);
-    FileWriter fileWriter = new FileWriter(dbGenFile);
     String sqlScript = DM2Schema.generateDatabase(this.dataModel, schemaName);
-    try {
+    try (FileWriter fileWriter = new FileWriter(dbGenFile)) {
       fileWriter.write(sqlScript);
     } catch (IOException e) {
       e.printStackTrace();
-    } finally {
-      fileWriter.flush();
-      fileWriter.close();
     }
   }
 
   /**
    * Generates the helper authorization function that is used in the generated stored procedures.
    */
-  public List<AuthFunc> SqlSIGenAuthFunc(String sqlauthfunctionoutputuri) throws Exception {
+  public void SqlSIGenAuthFunc(String sqlauthfunctionoutputuri) throws Exception {
 
     File funGenFile = new File(sqlauthfunctionoutputuri);
-    FileWriter fileWriter = new FileWriter(funGenFile);
 
     // getting the throw error function
     String throwErrorFunc = PrintingUtils.printThrowErrorFunc();
 
     // the actual list of Auth functions
-    List<AuthFunc> functions = FunctionUtils.printAuthFun(dataModel, securityModel);
+    this.authFuncs = FunctionUtils.printAuthFun(dataModel, securityModel);
 
-    try {
+    try (FileWriter fileWriter = new FileWriter(funGenFile)) {
       fileWriter.write(throwErrorFunc);
-      for (AuthFunc function : functions) {
+      for (AuthFunc function : this.authFuncs) {
         String secFunc = PrintingUtils.printAuthFunc(function);
         fileWriter.write(secFunc);
       }
     } catch (IOException e) {
       e.printStackTrace();
-    } finally {
-      fileWriter.flush();
-      fileWriter.close();
     }
-    return functions;
   }
 }

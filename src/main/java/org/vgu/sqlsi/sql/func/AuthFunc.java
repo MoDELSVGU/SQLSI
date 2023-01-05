@@ -125,9 +125,6 @@ public class AuthFunc extends SQLFunction {
 
   public void setParameters(AssociationClass associationClass) {
     this.setParameters(new HashMap<String, String>());
-    // this.getParameters().put(SQLSIConfiguration.SELF, SQLSIConfiguration.PARAM_TYPE);
-    // this.getParameters().put(SQLSIConfiguration.CALLER, SQLSIConfiguration.PARAM_TYPE);
-    // this.getParameters().put(SQLSIConfiguration.ROLE, SQLSIConfiguration.PARAM_TYPE);
 
     this.getParameters()
         .put(

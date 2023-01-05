@@ -26,3 +26,4 @@ hs_err_pid*
 ./.vscode/
 sncs2021_evaluation/result
 .vscode
+.session.vim

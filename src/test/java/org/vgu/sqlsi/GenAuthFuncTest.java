@@ -7,7 +7,7 @@ import org.vgu.sqlsi.main.SqlSI;
 /**
  * @author HuMiTriet
  */
-public class GenAuthFuncTest {
+class GenAuthFuncTest {
 
   static final String dataModelUri = "sncs2021_evaluation/assoClas_dm.json";
   static final String policyModelUri = "sncs2021_evaluation/secVGU#C3.json";

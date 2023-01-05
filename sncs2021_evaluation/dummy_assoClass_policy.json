@@ -1,0 +1,41 @@
+[
+  {
+    "roles": [
+      "Admin"
+    ],
+    "actions": [
+      "read"
+    ],
+    "resources": [
+      {
+        "entity": "academic_year_faculty",
+        "attribute": "comment"
+      },
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  },
+  {
+    "roles": [
+      "Admin"
+    ],
+    "actions": [
+      "read"
+    ],
+    "resources": [
+      {
+        "association": "academic_year_faculty",
+      },
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  }
+]

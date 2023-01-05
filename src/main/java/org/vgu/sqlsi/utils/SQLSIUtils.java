@@ -74,7 +74,7 @@ public class SQLSIUtils {
       PlainSelect plainSelect = (PlainSelect) selectBody;
       SelectSQLSI newSelectBody;
       List<Join> joins = plainSelect.getJoins();
-      if (joins == null || joins.size() == 0) {
+      if (joins == null || joins.isEmpty()) {
         FromItem fromItem = plainSelect.getFromItem();
         newSelectBody = classifySelectBasic(dataModel, fromItem);
       } else if (joins.size() == 1) {

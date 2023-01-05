@@ -26,28 +26,26 @@ import org.vgu.sqlsi.main.SqlSI;
 public class Main {
   public static void main(String[] args)
       throws FileNotFoundException, IOException, ParseException, Exception {
+
+    // // input
+    // final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
+    // final String policyModelURI = "sncs2021_evaluation/vgu_policy.json";
+    // final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
+    // // ouput
+    // final String databaseSchemaURI = "sncs2021_evaluation/result/vgu_db.sql";
+    // final String sqlAuthFuncURI = "sncs2021_evaluation/result/vgu_AuthFunc.sql";
+    // final String authProcOutputURI = "sncs2021_evaluation/result/vgu_AuthProc.sql";
+
     // input
-    final String dataModelURI = "sncs2021_evaluation/vgu_dm.json";
-    final String policyModelURI = "sncs2021_evaluation/vgu_policy.json";
-    final String queryModelURI = "sncs2021_evaluation/vgu_query.json";
-
+    final String dataModelURI = "sncs2021_evaluation/assoClass_dm.json";
+    final String policyModelURI = "sncs2021_evaluation/dummy_assoClass_policy.json";
+    final String queryModelURI = "sncs2021_evaluation/assoClass_query.json";
     // ouput
-    final String databaseSchemaURI = "sncs2021_evaluation/result/db.sql";
-    final String sqlAuthFuncURI = "sncs2021_evaluation/result/authFunc.sql";
-    final String authProcOutputURI = "sncs2021_evaluation/result/secProc.sql";
-    // final String dataModelURI = "fdse2020_demo/vgu_dm.json";
-    // final String databaseSchemaURI = "fdse2020_demo/uni.sql";
-    // final String policyModelURI = "fdse2020_demo/vguA.json";
-    // final String sqlAuthFuncURI = "fdse2020_demo/uni_sec.sql";
-    // final String queryModelURI = "fdse2020_demo/vgu_query.json";
-    // final String authProcOutputURI = "fdse2020_demo/uni_secProc.sql";
+    final String databaseSchemaURI = "sncs2021_evaluation/result/assoClass_db.sql";
+    final String sqlAuthFuncURI = "sncs2021_evaluation/result/assoClass_AuthFunc.sql";
+    final String authProcOutputURI = "sncs2021_evaluation/result/assoClass_AuthProc.sql";
+
     SqlSI sqlsi = new SqlSI();
-
-    // sqlsi.setUpDataModelFromURL(dataModelURI);
-    // sqlsi.generateDBSchema(databaseSchemaURI, schemaName);
-    // sqlsi.setUpSecurityModelFromURL(policyModelURI);
-
-    // sqlsi.generateSQLAuthFunctions(sqlAuthFuncURI);
 
     sqlsi.setDataModel(dataModelURI);
     sqlsi.setQueryModel(queryModelURI);

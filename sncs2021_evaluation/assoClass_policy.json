@@ -8,13 +8,35 @@
     ],
     "resources": [
       {
-        "association-class": "academic_year_faculty",
-      }
+        "entity": "academic_year_faculty",
+        "attribute": "comment"
+      },
     ],
     "auth": [
       {
-        "ocl": "true",
-        "sql": "TRUE"
+        "ocl": "_self.comment = 'no-comment'",
+        "sql": "EXIST (SELECT 1 FROM academic_year_faculty WHERE academic_year_faculty.comment = 'no-comment' AND academic_year_faculty.id = _self)"
+      }
+    ]
+  }
+  {
+    "roles": [
+      "Admin"
+    ],
+    "actions": [
+      "read"
+    ],
+    "resources": [
+      {
+        "association": "academic_year_faculty",
+      },
+    ],
+    "auth": [
+      {
+        "ocl": "",
+        "sql": "EXIST (SELECT 1 FROM academic_year_faculty LEFT JOIN academic_year ON academic_year_faculty.academic_year = academic_year.academic_year_id 
+        LEFT JOIN faculty ON academic_year_faculty.faculty = faculty.faculty_id 
+        WHERE academic_year.code = '2021' AND _academic_year = academic_year AND faculty.code = 'foundation-year' AND _faculty = faculty)"
       }
     ]
   }

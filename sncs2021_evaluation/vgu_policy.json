@@ -17,5 +17,25 @@
         "sql": "EXISTS (SELECT 1 FROM Enrollment WHERE lecturers = _caller AND _students = students)"
       }
     ]
+  },
+  {
+    "roles": [
+      "Lecturer"
+    ],
+    "actions": [
+      "read"
+    ],
+    "resources": [
+      {
+        "entity": "Student",
+        "attribute": "age"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "kcaller.students->exists(s|s=_self)",
+        "sql": "EXISTS (SELECT 1 FROM Enrollment WHERE lecturers = _caller AND _self = students)"
+      }
+    ]
   }
 ]

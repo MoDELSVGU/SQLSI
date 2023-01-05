@@ -19,7 +19,6 @@
 package org.vgu.sqlsi.sec;
 
 import org.json.simple.JSONObject;
-import org.vgu.sqlsi.sec.model.AssociationClassResource;
 import org.vgu.sqlsi.sec.model.AssociationResource;
 import org.vgu.sqlsi.sec.model.AttributeResource;
 import org.vgu.sqlsi.sec.model.Resource;
@@ -41,8 +40,6 @@ public class SecResourceFactory {
     JSONObject resourceJSON = (JSONObject) object;
     if (resourceJSON.containsKey("association")) {
       return new AssociationResource(resourceJSON);
-    } else if (resourceJSON.containsKey("association-class")) {
-      return new AssociationClassResource(resourceJSON);
     } else {
       return new AttributeResource(resourceJSON);
     }
