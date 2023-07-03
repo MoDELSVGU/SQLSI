@@ -169,7 +169,7 @@ To replicate scenario 1, please follow these instructions:
 - Clone the project (see Section III).
 - Build JAR file (see Section III.B.).
 - Copy all files in `resources\scenario1` into the `target` folder.
-- Execute JAR file
+- Stay in `target` and execute JAR file
 ```
 java -jar sqlsi-1.0.1-ASC.jar "voting_dm" "voting_sm" <query>
 ```
