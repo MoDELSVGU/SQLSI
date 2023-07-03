@@ -49,17 +49,17 @@
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
 			<artifactId>datamodelj</artifactId>
-			<version>[1.0.0,)</version>
+			<version>1.0.3-ASC</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
 			<artifactId>sqlj</artifactId>
-			<version>[1.0.0,)</version>
+			<version>1.0.2-ASC</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
 			<artifactId>securitymodelj</artifactId>
-			<version>[1.0.0,)</version>
+			<version>1.0.2-ASC</version>
 		</dependency>
 	</dependencies>
 
