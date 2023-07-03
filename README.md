@@ -184,6 +184,6 @@ in which `<query>` can be chosen from the queries above (see IV.C.).
 call secquery(<user>, <role>);
 ```
 in which:
-  - `<user>` can be 'Alice', 'Bob', or 'Charlie'
-  - `<role>` can be 'Voter'.
+  - `<user>` can be `'Alice'`, `'Bob'`, or `'Charlie'`
+  - `<role>` can be `'Voter'`.
 
