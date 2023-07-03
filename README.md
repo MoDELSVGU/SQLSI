@@ -113,22 +113,22 @@ Consider the following queries:
 
 #### Query#0: Query all votes' value.
 ```sql
-SELECT value FROM Vote;
+SELECT value FROM Vote
 ```
 
 #### Query#1: Query all votes' value of a user with id as `Alice`.
 ```sql
-SELECT value FROM Vote WHERE voters = 'Alice';
+SELECT value FROM Vote WHERE voters = 'Alice'
 ```
 
 #### Query#2: Query the elections in which `Bob` participated.
 ```sql
-SELECT elections FROM Vote WHERE voters = 'Bob';
+SELECT elections FROM Vote WHERE voters = 'Bob'
 ```
 
 #### Query#3: Query all votes' value of the election id `Election_2023`.
 ```sql
-SELECT value FROM Vote WHERE elections = 'Spain2023';
+SELECT value FROM Vote WHERE elections = 'Spain2023'
 ```
 
 #### Query#4: Query the votes' value of the elections in which `Bob` participated.
