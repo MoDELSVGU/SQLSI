@@ -24,6 +24,7 @@ SQLSI returns three outputs, namely,
 Interested readers can clone our project here 
 ```bash
 git clone https://github.com/MoDELSVGU/SQLSI.git
+cd SQLSI
 git checkout models23
 ```
 
