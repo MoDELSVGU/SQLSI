@@ -100,7 +100,7 @@ SELECT elections FROM Vote WHERE voters = 'Bob';
 
 #### Query#3: Query all votes' value of the election id `Election_2023`.
 ```sql
-SELECT value FROM Vote WHERE elections = 'Election_2023';
+SELECT value FROM Vote WHERE elections = 'Spain2023';
 ```
 
 #### Query#4: Query the votes' value of the elections in which `Bob` participated.
