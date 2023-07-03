@@ -35,7 +35,7 @@ public class SQLTemplate {
 	"END %2$s\r\n";
 	
 	public static final String AUTH_FUN_BODY = 
-	"IF (_role = '%1$s')\r\n" + 
+	"IF (%5$srole = '%1$s')\r\n" + 
 	"    THEN IF (%2$s(%3$s))\r\n" +
 	"        THEN RETURN (1);\r\n" + 
 	"        ELSE RETURN (0);\r\n" + 
@@ -48,7 +48,7 @@ public class SQLTemplate {
 	"DECLARE result INT DEFAULT 0;\r\n" +
 	"SELECT res INTO result FROM \r\n" + 
 	"(SELECT \r\n" + 
-	"%1$s" + "as res\r\n" + 
+	"%1$s" + " as res\r\n" + 
 	") AS TEMP;\r\n" +
 	"RETURN (result);\r\n" + 
 	"END %2$s\r\n";
@@ -66,7 +66,7 @@ public class SQLTemplate {
 	"START TRANSACTION;\r\n" + 
 	"%1$s" +
 	"IF _rollback = 0\r\n" + 
-	"THEN SELECT * from %2$s;\r\n" + 
+	"THEN %2$s;\r\n" + 
 	"END IF;\r\n" + 
 	"END //";
 }

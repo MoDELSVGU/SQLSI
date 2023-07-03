@@ -1,5 +1,4 @@
 /**************************************************************************
-Copyright 2020 Vietnamese-German-University
 Copyright 2023 ETH Zurich
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,18 +16,13 @@ limitations under the License.
 @author: hoangnguyen (hoang.nguyen@inf.ethz.ch)
 ***************************************************************************/
 
-package modeling.api;
+package modeling.security.mappings;
 
-public class SQLSIConfiguration {
-	public static final String SCHEMANAME = "mydb";
-	public static final String SECQUERYNAME = "secquery";
-	public static final String PARAM_PREFIX = "k";
-	public static final String PARAM_TYPE = "varchar(250)";
-	public static final String DELIMITER = "//";
+import net.sf.jsqlparser.statement.select.SelectVisitor;
 
-	public static final String SELF = PARAM_PREFIX + "self";
-	public static final String CALLER = PARAM_PREFIX + "caller";
-	public static final String TARGET = PARAM_PREFIX + "target";
-	public static final String VALUE = PARAM_PREFIX + "value";
-	public static final String ROLE = PARAM_PREFIX + "role";
+public class SelectJoinAssociationClassAndClass extends SelectSQLSI {
+    @Override
+    public void accept(SelectVisitor selectVisitor) {
+        selectVisitor.visit(this);
+    }
 }

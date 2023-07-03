@@ -19,6 +19,9 @@ limitations under the License.
 
 package modeling.security.mappings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.jsqlparser.expression.AllValue;
 import net.sf.jsqlparser.expression.AnalyticExpression;
 import net.sf.jsqlparser.expression.AnyComparisonExpression;
@@ -112,6 +115,7 @@ public class PropsInInjector implements ExpressionVisitor {
 
     private Boolean isPropsIn = false;
     private String propName;
+    private List<Column> props = new ArrayList<Column>();
 
     public Boolean getIsPropsIn() {
         return isPropsIn;
@@ -178,7 +182,8 @@ public class PropsInInjector implements ExpressionVisitor {
     }
 
     @Override
-    public void visit(LongValue longValue) {}
+    public void visit(LongValue longValue) {
+    }
 
     @Override
     public void visit(HexValue hexValue) {
@@ -242,8 +247,28 @@ public class PropsInInjector implements ExpressionVisitor {
 
     @Override
     public void visit(AndExpression andExpression) {
-        // TODO Auto-generated method stub
+        PropsInInjector leftPropsInInjector = new PropsInInjector();
+        leftPropsInInjector.setPropName(getPropName());
+        andExpression.getLeftExpression().accept(leftPropsInInjector);
+        if(leftPropsInInjector.getIsPropsIn()) {
+            setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
+        }
+        PropsInInjector rightPropsInInjector = new PropsInInjector();
+        rightPropsInInjector.setPropName(getPropName());
+        andExpression.getRightExpression().accept(rightPropsInInjector);
+        if(rightPropsInInjector.getIsPropsIn()) {
+            setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
+        }
+    }
 
+    public List<Column> getProps() {
+        return props;
+    }
+
+    public void setProps(List<Column> props) {
+        this.props = props;
     }
 
     @Override
@@ -251,14 +276,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         orExpression.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         orExpression.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -273,14 +300,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         equalsTo.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         equalsTo.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -289,14 +318,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         greaterThan.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         greaterThan.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -305,14 +336,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         greaterThanEquals.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         greaterThanEquals.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -327,8 +360,9 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         isNullExpression.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
     }
 
@@ -343,14 +377,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         minorThan.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         minorThan.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -359,14 +395,16 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         minorThanEquals.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         minorThanEquals.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
@@ -375,21 +413,24 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         notEqualsTo.getLeftExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
         PropsInInjector rightPropsInInjector = new PropsInInjector();
         rightPropsInInjector.setPropName(getPropName());
         notEqualsTo.getRightExpression().accept(rightPropsInInjector);
-        if(rightPropsInInjector.getIsPropsIn()) {
+        if (rightPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(rightPropsInInjector.getProps());
         }
     }
 
     @Override
     public void visit(Column tableColumn) {
-        if(tableColumn.getColumnName().equalsIgnoreCase(getPropName())) {
+        if (tableColumn.getColumnName().equalsIgnoreCase(getPropName())) {
             setIsPropsIn(true);
+            this.props.add(tableColumn);
         }
     }
 
@@ -572,8 +613,9 @@ public class PropsInInjector implements ExpressionVisitor {
         PropsInInjector leftPropsInInjector = new PropsInInjector();
         leftPropsInInjector.setPropName(getPropName());
         aThis.getExpression().accept(leftPropsInInjector);
-        if(leftPropsInInjector.getIsPropsIn()) {
+        if (leftPropsInInjector.getIsPropsIn()) {
             setIsPropsIn(true);
+            props.addAll(leftPropsInInjector.getProps());
         }
     }
 
@@ -598,133 +640,133 @@ public class PropsInInjector implements ExpressionVisitor {
     @Override
     public void visit(IntegerDivision division) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(FullTextSearch fullTextSearch) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(IsBooleanExpression isBooleanExpression) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void visit(ArrayExpression aThis) {
         // TODO Auto-generated method stub
-        
+
     }
 
-	@Override
-	public void visit(XorExpression orExpression) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(XorExpression orExpression) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(OverlapsCondition overlapsCondition) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(TryCastExpression cast) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(OverlapsCondition overlapsCondition) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(SafeCastExpression cast) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(RowGetExpression rowGetExpression) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(TryCastExpression cast) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(ArrayConstructor aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(VariableAssignment aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(SafeCastExpression cast) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(XMLSerializeExpr aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(TimezoneExpression aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(RowGetExpression rowGetExpression) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(JsonAggregateFunction aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(JsonFunction aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(ArrayConstructor aThis) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(ConnectByRootOperator aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(OracleNamedFunctionParameter aThis) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(VariableAssignment aThis) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(AllColumns allColumns) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(AllTableColumns allTableColumns) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(XMLSerializeExpr aThis) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(AllValue allValue) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void visit(IsDistinctExpression isDistinctExpression) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void visit(TimezoneExpression aThis) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void visit(GeometryDistance geometryDistance) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
+
+    @Override
+    public void visit(JsonAggregateFunction aThis) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(JsonFunction aThis) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(ConnectByRootOperator aThis) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(OracleNamedFunctionParameter aThis) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(AllColumns allColumns) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(AllTableColumns allTableColumns) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(AllValue allValue) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(IsDistinctExpression isDistinctExpression) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void visit(GeometryDistance geometryDistance) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

@@ -30,19 +30,28 @@ import modeling.statements.create.CreateTemporaryTable;
 import modeling.statements.drop.DropTemporaryTable;
 
 public class SQLSIStoredProcedure extends SQLStoredProcedure {
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
     private String name;
     private HashMap<String, String> parameters;
     private Stack<SQLTemporaryTable> temps;
     private String action;
     private String comments;
-    
+    private String query;
+
     public SQLSIStoredProcedure() {
-    	this.name = "SecQuery";
-    	HashMap<String, String> parameters = new HashMap<String, String>();
-		parameters.put(SQLSIConfiguration.CALLER, SQLSIConfiguration.PARAM_TYPE);
-		parameters.put(SQLSIConfiguration.ROLE, SQLSIConfiguration.PARAM_TYPE);
-		setParameters(parameters);
-	}
+        this.name = "SecQuery";
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put(SQLSIConfiguration.CALLER, SQLSIConfiguration.PARAM_TYPE);
+        parameters.put(SQLSIConfiguration.ROLE, SQLSIConfiguration.PARAM_TYPE);
+        setParameters(parameters);
+    }
 
     public Stack<SQLTemporaryTable> getTemps() {
         return temps;
@@ -71,7 +80,7 @@ public class SQLSIStoredProcedure extends SQLStoredProcedure {
 
     public String toString() {
         return String.format(SQLTemplate.PROC, printTemporaryTables(temps),
-            temps.peek().getName());
+                query);
     }
 
     private String printTemporaryTables(Stack<SQLTemporaryTable> temps) {
@@ -83,8 +92,8 @@ public class SQLSIStoredProcedure extends SQLStoredProcedure {
             CreateTemporaryTable createTemporaryTable = new CreateTemporaryTable();
             createTemporaryTable.setTemporaryTable(temp);
             printTemp = printTemp.concat(dropTemporaryTable.toString())
-                .concat(";\r\n").concat(createTemporaryTable.toString())
-                .concat(";\r\n");
+                    .concat(";\r\n").concat(createTemporaryTable.toString())
+                    .concat(";\r\n");
         }
         return printTemp;
     }
@@ -95,10 +104,10 @@ public class SQLSIStoredProcedure extends SQLStoredProcedure {
         for (String key : parameters.keySet()) {
             if (i == 0) {
                 para = para.concat(
-                    String.format("in %s %s", key, parameters.get(key)));
+                        String.format("in %s %s", key, parameters.get(key)));
             } else {
                 para = para.concat(
-                    String.format(", in %s %s", key, parameters.get(key)));
+                        String.format(", in %s %s", key, parameters.get(key)));
             }
             i++;
         }

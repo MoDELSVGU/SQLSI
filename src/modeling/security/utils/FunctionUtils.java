@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import modeling.data.entities.Association;
 import modeling.data.entities.Attribute;
 import modeling.data.entities.DataModel;
+import modeling.data.entities.End_AssociationClass;
 import modeling.data.entities.Entity;
 import modeling.security.entities.SecurityModel;
 import modeling.security.intermediates.AssociationUnitRule;
@@ -40,131 +41,241 @@ import modeling.statements.CompoundStatement;
 
 public class FunctionUtils {
 
-	public static List<AuthFunc> printAuthFun(DataModel dataModel, SecurityModel securityModel) throws Exception {
-		List<SecUnitRule> rules = RuleUtils.getAllUnitRules(securityModel);
-		List<AuthFunc> functions = new ArrayList<AuthFunc>();
-		for (Entity entity : dataModel.getEntities().values()) {
-			functions.addAll(getAuthFun(entity, rules));
-		}
-		for (Association association : dataModel.getAssociations()) {
-			functions.addAll(getAuthFun(association, rules));
-		}
-		return functions;
-	}
+    public static List<AuthFunc> printAuthFun(DataModel dataModel, SecurityModel securityModel) throws Exception {
+        List<SecUnitRule> rules = RuleUtils.getAllUnitRules(securityModel);
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
+        for (Entity entity : dataModel.getEntities().values()) {
+            functions.addAll(getAuthFun(entity, rules));
+        }
+        for (Association association : dataModel.getAssociations()) {
+            functions.addAll(getAuthFun(association, rules));
+        }
+        return functions;
+    }
 
-	private static List<AuthFunc> getAuthFun(Entity entity, List<SecUnitRule> rules) {
-		List<AuthFunc> functions = new ArrayList<AuthFunc>();
-		for (Attribute attribute : entity.getAttributes()) {
-			functions.add(getAuthFunFromAttribute("READ", entity, attribute, rules));
-		}
-		return functions;
-	}
+    private static List<AuthFunc> getAuthFun(Entity entity, List<SecUnitRule> rules) {
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
+        for (Attribute attribute : entity.getAttributes()) {
+            functions.add(getAuthFunFromAttribute("READ", entity, attribute, rules));
+        }
 
-	private static AuthFunc getAuthFunFromAttribute(String action, Entity entity, Attribute attribute,
-			List<SecUnitRule> rules) {
-		HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, entity, attribute, rules);
-		String authFunName = String.format("%1$s_%2$s", entity.getName(), attribute.getName());
-		AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
-		sqlAuthFunction.setParameters(attribute);
-		if (!indexRules.isEmpty()) {
-			for (String role : indexRules.keySet()) {
-				AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
-				sqlAuthRoleFunction.setParameters(attribute);
-				List<SecUnitRule> ruleRoleBased = indexRules.get(role);
-				sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-						.flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
-						.collect(Collectors.toList()));
-				sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-						.flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
-						.collect(Collectors.toList()));
-				CompoundStatement cs = new CompoundStatement();
-				cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
-				sqlAuthRoleFunction.setStatement(cs);
-				sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
-			}
-		}
-		CompoundStatement cs = new CompoundStatement();
-		cs.setStatement(sqlAuthFunction.getAuthFunBody());
-		sqlAuthFunction.setStatement(cs);
-		return sqlAuthFunction;
-	}
+        // This is for association classes
+        if (entity.isAssociation()) {
+            functions.add(getAuthFunFromAssociationClass("READ", entity, rules));
+            for (End_AssociationClass end_asc : entity.getEnd_acs()) {
+                functions.add(getAuthFuncFromAssocitionClassEnds("READ", entity, end_asc, rules));
+            }
+        }
 
-	public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Entity entity,
-			Attribute attribute, List<SecUnitRule> rules) {
-		HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
-		if (rules != null) {
-			for (SecUnitRule rule : rules) {
-				if (rule instanceof AttributeUnitRule) {
-					AttributeUnitRule attRule = (AttributeUnitRule) rule;
-					if (attRule.getEntity().equals(entity.getName())
-							&& attRule.getAttribute().equals(attribute.getName())
-							&& attRule.getAction().equals(action)) {
-						if (indexRules.containsKey(rule.getRole())) {
-							indexRules.get(rule.getRole()).add(rule);
-						} else {
-							indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
-							indexRules.get(rule.getRole()).add(rule);
-						}
-					}
-				}
-			}
-		}
-		return indexRules;
-	}
+        return functions;
+    }
 
-	private static Collection<? extends AuthFunc> getAuthFun(Association association, List<SecUnitRule> rules) {
-		List<AuthFunc> functions = new ArrayList<AuthFunc>();
-		functions.add(getAuthFunFromAssociation("READ", association, rules));
-		return functions;
-	}
+    private static AuthFunc getAuthFuncFromAssocitionClassEnds(String action, Entity entity,
+            End_AssociationClass end_asc, List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, entity, end_asc, rules);
+        String authFunName = String.format("%s", end_asc.getImplicitAssociation());
+        AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
+        sqlAuthFunction.setParameters(end_asc);
+        if (!indexRules.isEmpty()) {
+            for (String role : indexRules.keySet()) {
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
+                sqlAuthRoleFunction.setParameters(end_asc);
+                List<SecUnitRule> ruleRoleBased = indexRules.get(role);
+                sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
+                        .collect(Collectors.toList()));
+                sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
+                        .collect(Collectors.toList()));
+                CompoundStatement cs = new CompoundStatement();
+                cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
+                sqlAuthRoleFunction.setStatement(cs);
+                sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
+            }
+        }
+        CompoundStatement cs = new CompoundStatement();
+        cs.setStatement(sqlAuthFunction.getAuthFunBody());
+        sqlAuthFunction.setStatement(cs);
+        return sqlAuthFunction;
+    }
 
-	private static AuthFunc getAuthFunFromAssociation(String action, Association association, List<SecUnitRule> rules) {
-		HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, association, rules);
-		String authFunName = String.format("%s", association.getName());
-		AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
-		sqlAuthFunction.setParameters(association);
-		if (!indexRules.isEmpty()) {
-			for (String role : indexRules.keySet()) {
-				AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
-				sqlAuthRoleFunction.setParameters(association);
-				List<SecUnitRule> ruleRoleBased = indexRules.get(role);
-				sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-						.flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
-						.collect(Collectors.toList()));
-				sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
-						.flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
-						.collect(Collectors.toList()));
-				CompoundStatement cs = new CompoundStatement();
-				cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
-				sqlAuthRoleFunction.setStatement(cs);
-				sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
-			}
-		}
-		CompoundStatement cs = new CompoundStatement();
-		cs.setStatement(sqlAuthFunction.getAuthFunBody());
-		sqlAuthFunction.setStatement(cs);
-		return sqlAuthFunction;
-	}
+    private static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Entity entity,
+            End_AssociationClass end_asc, List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
+        if (rules != null) {
+            for (SecUnitRule rule : rules) {
+                if (rule instanceof AssociationUnitRule) {
+                    AssociationUnitRule assocRule = (AssociationUnitRule) rule;
+                    if (assocRule.getAssociation().equals(end_asc.getImplicitAssociation())
+                            && assocRule.getAction().equals(action)) {
+                        if (indexRules.containsKey(rule.getRole())) {
+                            indexRules.get(rule.getRole()).add(rule);
+                        } else {
+                            indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
+                            indexRules.get(rule.getRole()).add(rule);
+                        }
+                    }
+                }
+            }
+        }
+        return indexRules;
+    }
 
-	public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Association association,
-			List<SecUnitRule> rules) {
-		HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
-		if (rules != null) {
-			for (SecUnitRule rule : rules) {
-				if (rule instanceof AssociationUnitRule) {
-					AssociationUnitRule attRule = (AssociationUnitRule) rule;
-					if (attRule.getAssociation().equals(association.getName()) && attRule.getAction().equals(action)) {
-						if (indexRules.containsKey(rule.getRole())) {
-							indexRules.get(rule.getRole()).add(rule);
-						} else {
-							indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
-							indexRules.get(rule.getRole()).add(rule);
-						}
-					}
-				}
-			}
-		}
-		return indexRules;
-	}
+    private static AuthFunc getAuthFunFromAssociationClass(String action, Entity entity, List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, entity, rules);
+        String authFunName = String.format("%s", entity.getName());
+        AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
+        sqlAuthFunction.setParameters(entity);
+        if (!indexRules.isEmpty()) {
+            for (String role : indexRules.keySet()) {
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
+                sqlAuthRoleFunction.setParameters(entity);
+                List<SecUnitRule> ruleRoleBased = indexRules.get(role);
+                sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
+                        .collect(Collectors.toList()));
+                sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
+                        .collect(Collectors.toList()));
+                CompoundStatement cs = new CompoundStatement();
+                cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
+                sqlAuthRoleFunction.setStatement(cs);
+                sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
+            }
+        }
+        CompoundStatement cs = new CompoundStatement();
+        cs.setStatement(sqlAuthFunction.getAuthFunBody());
+        sqlAuthFunction.setStatement(cs);
+        return sqlAuthFunction;
+    }
+
+    private static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Entity entity,
+            List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
+        if (rules != null) {
+            for (SecUnitRule rule : rules) {
+                if (rule instanceof AssociationUnitRule) {
+                    AssociationUnitRule assocRule = (AssociationUnitRule) rule;
+                    if (assocRule.getAssociation().equals(entity.getName())
+                            && assocRule.getAction().equals(action)) {
+                        if (indexRules.containsKey(rule.getRole())) {
+                            indexRules.get(rule.getRole()).add(rule);
+                        } else {
+                            indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
+                            indexRules.get(rule.getRole()).add(rule);
+                        }
+                    }
+                }
+            }
+        }
+        return indexRules;
+    }
+
+    private static AuthFunc getAuthFunFromAttribute(String action, Entity entity, Attribute attribute,
+            List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, entity, attribute, rules);
+        String authFunName = String.format("%1$s_%2$s", entity.getName(), attribute.getName());
+        AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
+        sqlAuthFunction.setParameters(attribute);
+        if (!indexRules.isEmpty()) {
+            for (String role : indexRules.keySet()) {
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
+                sqlAuthRoleFunction.setParameters(attribute);
+                List<SecUnitRule> ruleRoleBased = indexRules.get(role);
+                sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
+                        .collect(Collectors.toList()));
+                sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
+                        .collect(Collectors.toList()));
+                CompoundStatement cs = new CompoundStatement();
+                cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
+                sqlAuthRoleFunction.setStatement(cs);
+                sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
+            }
+        }
+        CompoundStatement cs = new CompoundStatement();
+        cs.setStatement(sqlAuthFunction.getAuthFunBody());
+        sqlAuthFunction.setStatement(cs);
+        return sqlAuthFunction;
+    }
+
+    public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Entity entity,
+            Attribute attribute, List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
+        if (rules != null) {
+            for (SecUnitRule rule : rules) {
+                if (rule instanceof AttributeUnitRule) {
+                    AttributeUnitRule attRule = (AttributeUnitRule) rule;
+                    if (attRule.getEntity().equals(entity.getName())
+                            && attRule.getAttribute().equals(attribute.getName())
+                            && attRule.getAction().equals(action)) {
+                        if (indexRules.containsKey(rule.getRole())) {
+                            indexRules.get(rule.getRole()).add(rule);
+                        } else {
+                            indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
+                            indexRules.get(rule.getRole()).add(rule);
+                        }
+                    }
+                }
+            }
+        }
+        return indexRules;
+    }
+
+    private static Collection<? extends AuthFunc> getAuthFun(Association association, List<SecUnitRule> rules) {
+        List<AuthFunc> functions = new ArrayList<AuthFunc>();
+        functions.add(getAuthFunFromAssociation("READ", association, rules));
+        return functions;
+    }
+
+    private static AuthFunc getAuthFunFromAssociation(String action, Association association, List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = filterAndIndexRules(action, association, rules);
+        String authFunName = String.format("%s", association.getName());
+        AuthFunc sqlAuthFunction = new AuthFunc(action, authFunName);
+        sqlAuthFunction.setParameters(association);
+        if (!indexRules.isEmpty()) {
+            for (String role : indexRules.keySet()) {
+                AuthRoleFunc sqlAuthRoleFunction = new AuthRoleFunc(action, authFunName, role);
+                sqlAuthRoleFunction.setParameters(association);
+                List<SecUnitRule> ruleRoleBased = indexRules.get(role);
+                sqlAuthRoleFunction.setOcl(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getOcl))
+                        .collect(Collectors.toList()));
+                sqlAuthRoleFunction.setSql(ruleRoleBased.stream().map(SecUnitRule::getAuths)
+                        .flatMap(auths -> auths.stream().map(AuthorizationConstraint::getSql))
+                        .collect(Collectors.toList()));
+                CompoundStatement cs = new CompoundStatement();
+                cs.setStatement(sqlAuthRoleFunction.getAuthFunRoleSQL());
+                sqlAuthRoleFunction.setStatement(cs);
+                sqlAuthFunction.getFunctions().add(sqlAuthRoleFunction);
+            }
+        }
+        CompoundStatement cs = new CompoundStatement();
+        cs.setStatement(sqlAuthFunction.getAuthFunBody());
+        sqlAuthFunction.setStatement(cs);
+        return sqlAuthFunction;
+    }
+
+    public static HashMap<String, List<SecUnitRule>> filterAndIndexRules(String action, Association association,
+            List<SecUnitRule> rules) {
+        HashMap<String, List<SecUnitRule>> indexRules = new HashMap<String, List<SecUnitRule>>();
+        if (rules != null) {
+            for (SecUnitRule rule : rules) {
+                if (rule instanceof AssociationUnitRule) {
+                    AssociationUnitRule attRule = (AssociationUnitRule) rule;
+                    if (attRule.getAssociation().equals(association.getName()) && attRule.getAction().equals(action)) {
+                        if (indexRules.containsKey(rule.getRole())) {
+                            indexRules.get(rule.getRole()).add(rule);
+                        } else {
+                            indexRules.put(rule.getRole(), new ArrayList<SecUnitRule>());
+                            indexRules.get(rule.getRole()).add(rule);
+                        }
+                    }
+                }
+            }
+        }
+        return indexRules;
+    }
 
 }
