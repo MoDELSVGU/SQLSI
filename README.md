@@ -135,7 +135,7 @@ SELECT value FROM Vote WHERE elections = 'Spain2023';
 SELECT value FROM Vote JOIN (SELECT Voter_id FROM Voter WHERE name = 'Bob') AS TEMP ON voters = TEMP.Voter_id
 ```
 
-### IV.D. Scenario 1:
+### IV.D. Scenario:
 ```
 Voter
 +----------+---------+------------+
@@ -165,7 +165,24 @@ Vote
 ```
 
 To replicate scenario 1, please follow these instructions:
-- Clone the project.
-
-### Scenario 2:
+- Clone the project (see Section III).
+- Build JAR file (see Section III.B.).
+- Copy all files in `resources\scenario1` into the `target` folder.
+- Execute JAR file
+```
+java -jar sqlsi-1.0.1-ASC.jar "voting_dm" "voting_sm" <query>
+```
+in which `<query>` can be chosen from the queries above (see IV.C.).
+- Source the SQL artifacts into the MySQL databases in the following order:
+  - `mydb.sql`
+  - `myfunc.sql`
+  - `myquery.sql`
+  - `scenario1.sql`
+- Run the stored-procedure in MySQL server and observe the result:
+```sql
+call secquery(<user>, <role>);
+```
+in which:
+  - `<user>` can be 'Alice', 'Bob', or 'Charlie'
+  - `<role>` can be 'Voter'.
 
