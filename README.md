@@ -24,12 +24,13 @@ SQLSI returns three outputs, namely,
 Interested readers can clone our project here 
 ```bash
 git clone https://github.com/MoDELSVGU/SQLSI.git
+cd SQLSI
 git checkout models23
 ```
 
 Users can either call it as a standalone Java application or extend the implementation.
 
-### III.A. Continuous developing
+### III.A. Continuous development
 The following snippet demonstrates the usage of `SQLSI`:
 ```java
 SqlSI myExec = new SqlSI(); // Initialize SQLSI component
@@ -112,22 +113,22 @@ Consider the following queries:
 
 #### Query#0: Query all votes' value.
 ```sql
-SELECT value FROM Vote;
+SELECT value FROM Vote
 ```
 
 #### Query#1: Query all votes' value of a user with id as `Alice`.
 ```sql
-SELECT value FROM Vote WHERE voters = 'Alice';
+SELECT value FROM Vote WHERE voters = 'Alice'
 ```
 
 #### Query#2: Query the elections in which `Bob` participated.
 ```sql
-SELECT elections FROM Vote WHERE voters = 'Bob';
+SELECT elections FROM Vote WHERE voters = 'Bob'
 ```
 
 #### Query#3: Query all votes' value of the election id `Election_2023`.
 ```sql
-SELECT value FROM Vote WHERE elections = 'Spain2023';
+SELECT value FROM Vote WHERE elections = 'Spain2023'
 ```
 
 #### Query#4: Query the votes' value of the elections in which `Bob` participated.
@@ -168,7 +169,7 @@ To replicate scenario 1, please follow these instructions:
 - Clone the project (see Section III).
 - Build JAR file (see Section III.B.).
 - Copy all files in `resources\scenario1` into the `target` folder.
-- Execute JAR file
+- Stay in `target` and execute JAR file
 ```
 java -jar sqlsi-1.0.1-ASC.jar "voting_dm" "voting_sm" <query>
 ```
@@ -183,6 +184,6 @@ in which `<query>` can be chosen from the queries above (see IV.C.).
 call secquery(<user>, <role>);
 ```
 in which:
-  - `<user>` can be 'Alice', 'Bob', or 'Charlie'
-  - `<role>` can be 'Voter'.
+  - `<user>` can be `'Alice'`, `'Bob'`, or `'Charlie'`
+  - `<role>` can be `'Voter'`.
 
