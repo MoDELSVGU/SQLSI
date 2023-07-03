@@ -3,12 +3,12 @@
 
 `SQLSI` is a Java application that rewrites SQL queries into security-aware ones, i.e. "enforcing" predefined Fine-Grained Access Control (FGAC) policy.
 
-## Introduction
+## I. Introduction
 This open-source project is intended for readers of our papers:
 - An extended model-based characterization of fine-grained access control for SQL queries. [paper](tbd)
 - For architecture design, see [here]().
 
-## About
+## II. About
 
 SQLSI takes three inputs: 
 - a data model, 
@@ -20,13 +20,16 @@ SQLSI returns three outputs, namely,
 - the generated SQL-authorization functions (corresponding to the given security model) and,
 - the generated SQL secure stored procedure (corresponding to the given SQL-select statement).
 
-## Quick Guideline
+## III. Quick Guideline
 Interested readers can clone our project here 
 ```bash
 git clone https://github.com/MoDELSVGU/SQLSI.git
 git checkout models23
 ```
 
+Users can either call it as a standalone Java application or extend the implementation.
+
+### III.A. Continuous developing
 The following snippet demonstrates the usage of `SQLSI`:
 ```java
 SqlSI myExec = new SqlSI(); // Initialize SQLSI component
@@ -53,13 +56,37 @@ final String statement = "<an_sql_select_statement>";
 myExec.SqlSIGenSecQuery(queryProcURL, statement);
 ```
 
-## Case study: Voting system
+### III.B. Standalone application
+
+#### Requirements
+- (required) Python 3.3 (or higher).
+- (required) Maven 3 and Java 1.8 (or higher).
+
+#### How to bulid the standalone application
+```bash
+cd SQLSI
+mvn clean install
+```
+When it is done, the executable jar (i.e., `sqlsi-1.0.1-ASC.jar`) is stored in `target` subdirectory along with the libraries on which it depends.
+
+Copy the datamodel and securitymodel into this `target` directory.
+
+To execute it, simply invoke the following command:
+```bash
+java -jar sqlsi-1.0.1-ASC.jar <datamodel_url> <securitymodel_url> <SQLquery>
+```
+in which:
+- <datamodel_url> refers to the url of the datamodel, e.g., `voting_dm`
+- <securitymodel_url> refers to the url of the securitymodel, e.g., `voting_sm`
+- <SQLquery> refers to the SQL query, e.g., `SELECT value FROM Vote`
+
+## IV. Case study: Voting system
 
 The Voting Management System is a basic application designed for managing sensitive information related to elections.
 It handles data regarding voters (such as name and social security number), 
 elections (including descriptions) and votes (consisting of value, timestamp) cast by voters in elections.
 
-### Data model
+### IV.A. Data model
 
 For detailed information about the data model, please refer to the following [link]().
 
@@ -67,7 +94,7 @@ The datamodel primarily consists of three classes: two classes (`Election` and `
   - `Voter` class contains fields for `name` and `ssn` while `Election` has a field for `description`.
   - `Vote` class represents the association between `Voter` and `Election`, and includes an additional field `value` for storing the vote result.
 
-### Security model
+### IV.B. Security model
 
 For detailed information about the security model, please refer to the following [link]().
 
@@ -79,7 +106,7 @@ The security model defines the following rules:
   - For each election, every User can know the votes that were cast in the election.
   - For each vote, only the voter who cast the vote can know who cast it.
 
-### Query model
+### IV.C. Queries
 
 Consider the following queries:
 
@@ -105,12 +132,10 @@ SELECT value FROM Vote WHERE elections = 'Spain2023';
 
 #### Query#4: Query the votes' value of the elections in which `Bob` participated.
 ```sql
-SELECT value FROM Vote
-JOIN (SELECT Voter_id FROM Voter WHERE name = 'Bob') AS TEMP
-ON voters = TEMP.Voter_id
+SELECT value FROM Vote JOIN (SELECT Voter_id FROM Voter WHERE name = 'Bob') AS TEMP ON voters = TEMP.Voter_id
 ```
 
-### Scenario 1:
+### IV.D. Scenario:
 ```
 Voter
 +----------+---------+------------+
@@ -139,5 +164,25 @@ Vote
 +---------+-------------+--------+-------+
 ```
 
-### Scenario 2:
+To replicate scenario 1, please follow these instructions:
+- Clone the project (see Section III).
+- Build JAR file (see Section III.B.).
+- Copy all files in `resources\scenario1` into the `target` folder.
+- Execute JAR file
+```
+java -jar sqlsi-1.0.1-ASC.jar "voting_dm" "voting_sm" <query>
+```
+in which `<query>` can be chosen from the queries above (see IV.C.).
+- Source the SQL artifacts into the MySQL databases in the following order:
+  - `mydb.sql`
+  - `myfunc.sql`
+  - `myquery.sql`
+  - `scenario1.sql`
+- Run the stored-procedure in MySQL server and observe the result:
+```sql
+call secquery(<user>, <role>);
+```
+in which:
+  - `<user>` can be 'Alice', 'Bob', or 'Charlie'
+  - `<role>` can be 'Voter'.
 
