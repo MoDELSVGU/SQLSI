@@ -29,7 +29,7 @@ git checkout models23
 
 Users can either call it as a standalone Java application or extend the implementation.
 
-### III.A. Continuous developing
+### III.A. Continuous development
 The following snippet demonstrates the usage of `SQLSI`:
 ```java
 SqlSI myExec = new SqlSI(); // Initialize SQLSI component
