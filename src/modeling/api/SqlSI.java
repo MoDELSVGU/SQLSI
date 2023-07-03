@@ -52,6 +52,23 @@ public class SqlSI {
     private DataModel dataModel;
     private SecurityModel securityModel;
     private List<QueryModel> queriesModel;
+    
+    public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
+        SqlSI myExec = new SqlSI(); 
+        myExec.setDataModel(String.format("resources/%s.json", args[0])); 
+        myExec.setSecurityModel(String.format("resources/%s.json", args[1])); 
+
+        /* (1). To generate MySQL database schema: */
+        final String schemaURL = "resources/mydb.sql";
+        myExec.SqlSIGenDatabase(schemaURL);
+
+        /* 2). To generate MySQL authorization checks: */
+        final String authFuncURL = "resources/myfunc.sql";
+        myExec.SqlSIGenAuthFunc(authFuncURL);
+        
+        final String queryProcURL = "resources/myquery.sql";
+        myExec.SqlSIGenSecQuery(queryProcURL, args[2]);
+    }
 
     public void setDataModel(String url) throws FileNotFoundException, IOException, ParseException, Exception {
         this.dataModel = transformDataModel(url);

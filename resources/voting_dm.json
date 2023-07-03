@@ -1,0 +1,60 @@
+[
+	{
+		"class": "Election",
+		"attributes": [
+			{
+				"name": "description",
+				"type": "String"
+			}
+		]
+	},
+	{
+		"class": "Voter",
+		"attributes": [
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "ssn",
+				"type": "String"
+			}
+		]
+	},
+	{
+		"class": "Vote",
+		"isAssociation": true,
+		"attributes": [
+			{
+				"name": "value",
+				"type": "Integer"
+			}
+		],
+		"ends": [
+			{
+				"association": "votes_in_election",
+				"name": "elections",
+				"target": "Election",
+				"opps": [
+					"voters"
+				],
+				"opptargets": [
+					"Voter"
+				],
+				"mult": "*"
+			},
+			{
+				"association": "votes_by_voters",
+				"name": "voters",
+				"target": "Voter",
+				"opps": [
+					"elections"
+				],
+				"opptargets": [
+					"Election"
+				],
+				"mult": "*"
+			}
+		]
+	}
+]
