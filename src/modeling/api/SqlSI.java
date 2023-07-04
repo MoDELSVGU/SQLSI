@@ -55,6 +55,7 @@ public class SqlSI {
     
     public static void main(String[] args) throws FileNotFoundException, IOException, ParseException, Exception {
         SqlSI myExec = new SqlSI(); 
+        
         myExec.setDataModel(String.format("%s.json", args[0])); 
         myExec.setSecurityModel(String.format("%s.json", args[1])); 
 

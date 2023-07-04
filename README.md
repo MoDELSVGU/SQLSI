@@ -67,13 +67,13 @@ myExec.SqlSIGenSecQuery(queryProcURL, statement);
 cd SQLSI
 mvn clean install
 ```
-When it is done, the executable jar (i.e., `sqlsi-1.0.1-ASC.jar`) is stored in `target` subdirectory along with the libraries on which it depends.
+When it is done, the executable jar (i.e., `sqlsi-1.0.3-ASC.jar`) is stored in `target` subdirectory along with the libraries on which it depends.
 
 Copy the datamodel and securitymodel into this `target` directory.
 
 To execute it, simply invoke the following command:
 ```bash
-java -jar sqlsi-1.0.1-ASC.jar <datamodel_url> <securitymodel_url> <SQLquery>
+java -jar sqlsi-1.0.3-ASC.jar <datamodel_url> <securitymodel_url> <SQLquery>
 ```
 in which:
 - <datamodel_url> refers to the url of the datamodel, e.g., `voting_dm`
@@ -174,7 +174,7 @@ To replicate this scenario, please follow these instructions:
 - Copy all files in `resources\scenario1` into the `target` folder.
 - Stay in `target` and execute JAR file
 ```
-java -jar sqlsi-1.0.1-ASC.jar "voting_dm" "voting_sm" <query>
+java -jar sqlsi-1.0.3-ASC.jar "voting_dm" "voting_sm" <query>
 ```
 in which `<query>` can be chosen from the queries above (see IV.C.).
 - Source the SQL artifacts into the MySQL databases in the following order:

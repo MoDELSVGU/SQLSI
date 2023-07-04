@@ -1,5 +1,5 @@
 {
-	"version": "1.0.4-ASC",
+	"version": "1.0.5-ASC",
 	"dataModel": [
 		{
 			"class": "Election",
