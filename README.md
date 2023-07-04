@@ -60,7 +60,6 @@ myExec.SqlSIGenSecQuery(queryProcURL, statement);
 ### III.B. Standalone application
 
 #### Requirements
-- (required) Python 3.3 (or higher).
 - (required) Maven 3 and Java 1.8 (or higher).
 
 #### How to bulid the standalone application
