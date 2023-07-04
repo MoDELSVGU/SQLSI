@@ -1,12 +1,12 @@
 # SQLSI
-***(Jul, 2023) This branch (`models23`) is preserved for submitting working artifacts for the ACM/IEEE 26th International Conference on Model-Driven Engineering Languages and Systems (MODELS) 2023.***
-
 `SQLSI` is a Java application that rewrites SQL queries into security-aware ones, i.e. "enforcing" predefined Fine-Grained Access Control (FGAC) policy.
+
+***(Jul, 2023) This branch (`models23`) is preserved for submitting working artifacts for the ACM/IEEE 26th International Conference on Model-Driven Engineering Languages and Systems (MODELS) 2023.***
 
 ## I. Introduction
 This open-source project is intended for readers of our papers:
 - An extended model-based characterization of fine-grained access control for SQL queries. [paper](tbd)
-- For architecture design, see [here]().
+- For architecture design, see [here](https://github.com/MoDELSVGU/SQLSI/wiki/Architecture-design).
 
 ## II. About
 
@@ -60,7 +60,6 @@ myExec.SqlSIGenSecQuery(queryProcURL, statement);
 ### III.B. Standalone application
 
 #### Requirements
-- (required) Python 3.3 (or higher).
 - (required) Maven 3 and Java 1.8 (or higher).
 
 #### How to bulid the standalone application
@@ -89,15 +88,17 @@ elections (including descriptions) and votes (consisting of value, timestamp) ca
 
 ### IV.A. Data model
 
-For detailed information about the data model, please refer to the following [link]().
+For detailed information about the data model, please refer to the manuscript.
 
 The datamodel primarily consists of three classes: two classes (`Election` and `Voter`) and one association class (`Vote`).
   - `Voter` class contains fields for `name` and `ssn` while `Election` has a field for `description`.
   - `Vote` class represents the association between `Voter` and `Election`, and includes an additional field `value` for storing the vote result.
 
+Example of the aforementioned datamodel can be found [here](https://github.com/MoDELSVGU/SQLSI/blob/models23/resources/scenario1/voting_dm.json).
+
 ### IV.B. Security model
 
-For detailed information about the security model, please refer to the following [link]().
+For detailed information about the security model, please refer to the manuscript.
 
 The security model defines the following rules:
   - There is a single role in this application, namely, User.
@@ -106,6 +107,8 @@ The security model defines the following rules:
   - For each election, every User can know the voters who participated in the election.
   - For each election, every User can know the votes that were cast in the election.
   - For each vote, only the voter who cast the vote can know who cast it.
+
+Example of the aforementioned securitymodel can be found [here](https://github.com/MoDELSVGU/SQLSI/blob/models23/resources/scenario1/voting_sm.json).
 
 ### IV.C. Queries
 
@@ -165,7 +168,7 @@ Vote
 +---------+-------------+--------+-------+
 ```
 
-To replicate scenario 1, please follow these instructions:
+To replicate this scenario, please follow these instructions:
 - Clone the project (see Section III).
 - Build JAR file (see Section III.B.).
 - Copy all files in `resources\scenario1` into the `target` folder.
