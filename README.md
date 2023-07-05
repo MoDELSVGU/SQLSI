@@ -114,27 +114,27 @@ Example of the aforementioned securitymodel can be found [here](https://github.c
 
 Consider the following queries:
 
-#### Query#0: Query all votes' value.
+#### Query#1: Query all votes' value.
 ```sql
 SELECT value FROM Vote
 ```
 
-#### Query#1: Query all votes' value of a user with id as `Alice`.
+#### Query#2: Query all votes' value of a user with id as `Alice`.
 ```sql
 SELECT value FROM Vote WHERE voters = 'Alice'
 ```
 
-#### Query#2: Query the elections in which `Bob` participated.
+#### Query#3: Query the elections in which `Bob` participated.
 ```sql
 SELECT elections FROM Vote WHERE voters = 'Bob'
 ```
 
-#### Query#3: Query all votes' value of the election id `Election_2023`.
+#### Query#4: Query all votes' value of the election id `Election_2023`.
 ```sql
 SELECT value FROM Vote WHERE elections = 'Spain2023'
 ```
 
-#### Query#4: Query the votes' value of the elections in which `Bob` participated.
+#### Query#5: Query the votes' value of the elections in which `Bob` participated.
 ```sql
 SELECT value FROM Vote JOIN (SELECT Voter_id FROM Voter WHERE name = 'Bob') AS TEMP ON voters = TEMP.Voter_id
 ```
