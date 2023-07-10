@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.modelsvgu</groupId>
 	<artifactId>sqlsi</artifactId>
-	<version>1.0.3-ASC</version>
+	<version>1.0.3</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>SQLSI (SQL Security Injector) is an open source application that automatically injects SQL Authorization Checks into given SQL select statement.</description>
 	<url>https://github.com/MoDELSVGU/SQLSI</url>
