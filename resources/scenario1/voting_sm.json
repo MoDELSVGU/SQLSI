@@ -1,0 +1,87 @@
+[
+  {
+    "roles": [ "Voter" ],
+    "actions": [ "read" ],
+    "resources": [
+      {
+        "entity": "Election",
+        "attribute": "description"
+      },
+      {
+        "entity": "Voter",
+        "attribute": "name"
+      },
+      {
+        "entity": "Vote",
+        "attribute": "value"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  },
+  {
+    "roles": [ "Voter" ],
+    "actions": [ "read" ],
+    "resources": [
+      {
+        "entity": "Voter",
+        "attribute": "ssn"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "kself = kcaller",
+        "sql": "kself = kcaller"
+      }
+    ]
+  },
+  {
+    "roles": [ "Voter" ],
+    "actions": [ "read" ],
+    "resources": [
+      {
+        "association": "Vote"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  },
+  {
+    "roles": [ "Voter" ],
+    "actions": [ "read" ],
+    "resources": [
+      {
+        "association": "votes_in_election"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "true",
+        "sql": "TRUE"
+      }
+    ]
+  },
+  {
+    "roles": [ "Voter" ],
+    "actions": [ "read" ],
+    "resources": [
+      {
+        "association": "votes_by_voters"
+      }
+    ],
+    "auth": [
+      {
+        "ocl": "kvoters = kcaller",
+        "sql": "kvoters = kcaller"
+      }
+    ]
+  }
+] 

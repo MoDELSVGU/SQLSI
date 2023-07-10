@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,6 +63,9 @@ public class DM2Schema {
 
         List<Statement> associationStatements = generateAssociationStatements(context);
         schema.addAll(associationStatements.stream().map(Statement::toString).collect(Collectors.toList()));
+        
+        List<Statement> associationClassStatements = generateAssociationClassStatements(context, sm);
+        schema.addAll(associationClassStatements.stream().map(Statement::toString).collect(Collectors.toList()));
 
         String script = "";
 
@@ -71,12 +75,32 @@ public class DM2Schema {
         return script;
     }
 
+    private static List<Statement> generateAssociationClassStatements(DataModel dataModel, SecurityModel securityModel) {
+        Map<String, Entity> mapEntities = dataModel.getEntities();
+        List<Entity> entities = new ArrayList<Entity>();
+        for (Entry<String, Entity> m : mapEntities.entrySet()) {
+            Entity e = m.getValue();
+            if (e.isAssociation()) {
+                entities.add(e);
+            }
+        }
+        return createTablesStatements(entities, securityModel);
+    }
+
     private static List<Statement> generateAssociationStatements(DataModel dataModel) {
         return createAssociationStatements(dataModel.getAssociations());
     }
 
     private static List<Statement> generateEntityStatements(DataModel dataModel, SecurityModel securityModel) {
-        return createTablesStatements(dataModel.getEntities(), securityModel);
+        Map<String, Entity> mapEntities = dataModel.getEntities();
+        List<Entity> entities = new ArrayList<Entity>();
+        for (Entry<String, Entity> m : mapEntities.entrySet()) {
+            Entity e = m.getValue();
+            if (!e.isAssociation()) {
+                entities.add(e);
+            }
+        }
+        return createTablesStatements(entities, securityModel);
     }
 
     private static List<String> generateDBStatements(String databaseName) {
@@ -225,11 +249,9 @@ public class DM2Schema {
         return column;
     }
 
-    private static List<Statement> createTablesStatements(Map<String, Entity> entities, SecurityModel sm) {
+    private static List<Statement> createTablesStatements(List<Entity> entities, SecurityModel sm) {
         List<Statement> tables = new ArrayList<Statement>();
-        for (Map.Entry<String, Entity> entry : entities.entrySet()) {
-            Entity entity = entry.getValue();
-
+        for (Entity entity : entities) {
             CreateTable createTable = new CreateTable();
             tables.add(createTable);
             // Set table name
