@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.modelsvgu</groupId>
 	<artifactId>sqlsi</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.0</version>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>SQLSI (SQL Security Injector) is an open source application that automatically injects SQL Authorization Checks into given SQL select statement.</description>
 	<url>https://github.com/MoDELSVGU/SQLSI</url>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
 			<artifactId>datamodelj</artifactId>
-			<version>1.0.7-ASC</version>
+			<version>1.0.8-ASC</version>
 		</dependency>
 		<dependency>
 			<groupId>io.github.modelsvgu</groupId>
@@ -124,5 +124,46 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>modeling.api.SqlSI</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
 
