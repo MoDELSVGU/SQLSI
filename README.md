@@ -63,8 +63,9 @@ myExec.SqlSIGenSecQuery(queryProcURL, statement);
 - (required) Maven 3 and Java 1.8 (or higher).
 
 #### How to bulid the standalone application
+
+Go to the main directory then execute the following:
 ```bash
-cd SQLSI
 mvn clean install
 ```
 When it is done, the executable jar (i.e., `sqlsi-1.0.3-ASC.jar`) is stored in `target` subdirectory along with the libraries on which it depends.
@@ -79,6 +80,11 @@ in which:
 - <datamodel_url> refers to the url of the datamodel, e.g., `voting_dm`
 - <securitymodel_url> refers to the url of the securitymodel, e.g., `voting_sm`
 - <SQLquery> refers to the SQL query, e.g., `SELECT value FROM Vote`
+
+Note that parameters must be double quoted, if they contain spaces. For example:
+```
+java -jar sqlsi-1.0.3-ASC.jar "voting_dm" "voting_sm" "SELECT value FROM Vote"
+```
 
 ## IV. Case study: Voting system
 
