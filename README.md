@@ -81,7 +81,8 @@ in which:
 - <securitymodel_url> refers to the url of the securitymodel, e.g., `voting_sm`
 - <SQLquery> refers to the SQL query, e.g., `SELECT value FROM Vote`
 
-Note that parameters must be double quoted, if they contain spaces. For example:
+> **Note**
+> parameters must be double quoted, if they contain spaces. For example:
 ```
 java -jar sqlsi-1.0.3-ASC.jar "voting_dm" "voting_sm" "SELECT value FROM Vote"
 ```
