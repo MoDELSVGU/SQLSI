@@ -256,7 +256,7 @@ public class SecExpInjector implements ExpressionVisitor {
     @Override
     public void visit(Parenthesis parenthesis) {
         // TODO Auto-generated method stub
-
+    	this.setResult(parenthesis);
     }
 
     @Override
@@ -534,6 +534,8 @@ public class SecExpInjector implements ExpressionVisitor {
             if (SQLSIUtils.isTable(dataModel, table.getName())) {
                 tableName = table.getName();
             } else {
+                String alias = table.getName();
+                
                 // 08.05: This must be an alias
             }
         }

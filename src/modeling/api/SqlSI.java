@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Stack;
 
@@ -47,6 +49,8 @@ import modeling.security.utils.SQLSIUtils;
 import modeling.statements.SQLTemporaryTable;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.select.FromItem;
+import net.sf.jsqlparser.statement.select.SelectItem;
 
 public class SqlSI {
     private DataModel dataModel;
@@ -58,6 +62,8 @@ public class SqlSI {
         
         myExec.setDataModel(String.format("%s.json", args[0])); 
         myExec.setSecurityModel(String.format("%s.json", args[1])); 
+        
+        String queryName = args[2];
 
         /* (1). To generate MySQL database schema: */
         final String schemaURL = "mydb.sql";
@@ -67,8 +73,9 @@ public class SqlSI {
         final String authFuncURL = "myfunc.sql";
         myExec.SqlSIGenAuthFunc(authFuncURL);
         
-        final String queryProcURL = "myquery.sql";
-        myExec.SqlSIGenSecQuery(queryProcURL, args[2]);
+        String queryProcURL = String.format("%s.sql", queryName);
+        myExec.SqlSIGenSecQuery(queryProcURL, args[3], queryName);
+        
     }
 
     public void setDataModel(String url) throws FileNotFoundException, IOException, ParseException, Exception {
@@ -146,12 +153,17 @@ public class SqlSI {
         fileWriter.close();
     }
 
-    public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri, String statement) throws Exception {
+    public void SqlSIGenSecQuery(String sqlstoredprocedureoutputuri, String statement, String queryName) throws Exception {
         File secQueryFile = new File(sqlstoredprocedureoutputuri);
         FileWriter fileWriter = new FileWriter(secQueryFile);
-        Stack<SQLTemporaryTable> temps = genSecProc(statement, null, null);
+        Stack<SQLTemporaryTable> temps = new Stack<SQLTemporaryTable>();
+        try {
+            temps = genSecProc(statement, null, null);
+        } catch (Exception e) {
+             e.printStackTrace();
+        }
         SQLSIStoredProcedure storedProcedure = new SQLSIStoredProcedure();
-        storedProcedure.setName(SQLSIConfiguration.SECQUERYNAME);
+        storedProcedure.setName(queryName);
         storedProcedure.setComments(statement);
         storedProcedure.setQuery(statement);
         storedProcedure.setTemps(temps);
@@ -163,13 +175,18 @@ public class SqlSI {
         }
         fileWriter.flush();
         fileWriter.close();
+        
     }
 
     private Stack<SQLTemporaryTable> genSecProc(String statement, JSONArray vars, JSONArray pars) throws Exception {
 
+        statement = SQLSIUtils.removeTicks(statement);
+//        System.out.println(statement);
         Statement statementSql = CCJSqlParserUtil.parse(statement);
 
-        SQLSIUtils.classify(statementSql, dataModel);
+        HashMap<String,FromItem> aliasFromItems = new HashMap<String,FromItem>();
+        HashMap<String,SelectItem> aliasSelitems = new HashMap<String,SelectItem>();
+        SQLSIUtils.classify(aliasFromItems, aliasSelitems, statementSql, dataModel);
 
         SecQueryVisitor secQuery = new SecQueryVisitor();
         secQuery.setFunctions(FunctionUtils.printAuthFun(dataModel, securityModel));

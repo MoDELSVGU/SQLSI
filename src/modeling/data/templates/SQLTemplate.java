@@ -64,6 +64,7 @@ public class SQLTemplate {
 	"  ROLLBACK;\r\n" + 
 	"END;\r\n" + 
 	"START TRANSACTION;\r\n" + 
+	"/* TODO: Implementation <<security>> stub! */ \r\n" +
 	"%1$s" +
 	"IF _rollback = 0\r\n" + 
 	"THEN %2$s;\r\n" + 

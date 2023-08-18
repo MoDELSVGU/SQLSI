@@ -985,7 +985,13 @@ public class SelectInjector implements SelectVisitor {
 
     private void visitClassJoinAssociation(PlainSelect plainSelect) throws Exception {
         List<SelectItem> selitems = plainSelect.getSelectItems();
-        Expression exp = plainSelect.getJoins().get(0).getOnExpression();
+        Expression exp = null;
+        if (!plainSelect.getJoins().isEmpty()) {
+            Join join = plainSelect.getJoins().get(0);
+            if (!join.getOnExpressions().isEmpty()) {
+                exp = join.getOnExpression();
+            }
+        }
         Expression exp_ = plainSelect.getWhere();
         Table c = (Table) plainSelect.getFromItem();
         Table as = (Table) plainSelect.getJoins().get(0).getRightItem();

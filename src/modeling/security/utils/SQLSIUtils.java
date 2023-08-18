@@ -21,6 +21,7 @@ package modeling.security.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ import modeling.data.entities.DataModel;
 import modeling.data.entities.End;
 import modeling.data.entities.End_AssociationClass;
 import modeling.data.entities.Entity;
+import modeling.data.sql.temp.NotSupportedException;
 import modeling.security.entities.SecurityModel;
 import modeling.security.mappings.SelectBasicAssociation;
 import modeling.security.mappings.SelectBasicAssociationClass;
@@ -53,6 +55,7 @@ import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.select.SubSelect;
 
 public class SQLSIUtils {
@@ -63,80 +66,80 @@ public class SQLSIUtils {
         return sm.getUserClass().contains(entity.getName());
     }
 
-    public static void classify(Statement statement, DataModel dataModel) throws Exception {
+    public static void classify(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, Statement statement, DataModel dataModel) throws Exception {
         if (statement instanceof Select) {
-            classifySelect(statement, dataModel);
+            classifySelect(aliasFromItems, aliasSelitems, statement, dataModel);
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
     }
 
-    private static void classifySelect(Statement statement, DataModel dataModel) throws Exception {
+    private static void classifySelect(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, Statement statement, DataModel dataModel) throws Exception {
         Select select = (Select) statement;
         SelectBody selectBody = select.getSelectBody();
         if (selectBody != null && selectBody instanceof PlainSelect) {
-            SelectBody newSelectBody = classifySelectBody(dataModel, selectBody);
+            SelectBody newSelectBody = classifySelectBody(aliasFromItems, aliasSelitems, dataModel, selectBody);
             select.setSelectBody(newSelectBody);
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
     }
 
-    private static SelectBody classifySelectBody(DataModel dataModel, SelectBody selectBody) throws Exception {
+    private static SelectBody classifySelectBody(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, SelectBody selectBody) throws Exception {
         if (selectBody instanceof PlainSelect) {
             PlainSelect plainSelect = (PlainSelect) selectBody;
             SelectSQLSI newSelectBody;
             List<Join> joins = plainSelect.getJoins();
             if (joins == null || joins.size() == 0) {
                 FromItem fromItem = plainSelect.getFromItem();
-                newSelectBody = classifySelectBasic(dataModel, fromItem);
+                newSelectBody = classifySelectBasic(aliasFromItems, aliasSelitems, dataModel, fromItem);
             } else if (joins.size() == 1) {
                 FromItem fromItem = plainSelect.getFromItem();
-                newSelectBody = classifySelectWithSingleJoin(dataModel, fromItem, joins);
+                newSelectBody = classifySelectWithSingleJoin(aliasFromItems, aliasSelitems, dataModel, fromItem, joins);
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
             newSelectBody.setSelectItems(plainSelect.getSelectItems());
             newSelectBody.setWhere(plainSelect.getWhere());
             return newSelectBody;
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
     }
 
-    private static SelectSQLSI classifySelectWithSingleJoin(DataModel dataModel, FromItem fromItem, List<Join> joins)
+    private static SelectSQLSI classifySelectWithSingleJoin(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, FromItem fromItem, List<Join> joins)
             throws Exception {
         Join join = joins.get(0);
         FromItem newFromItem;
         SelectSQLSI selectSQLSI;
         if (fromItem instanceof SubSelect) {
             SubSelect subselect = (SubSelect) fromItem;
-            newFromItem = selectSS(dataModel, subselect);
-            selectSQLSI = classifySelectWhenLeftItemIsSubSelect(dataModel, join);
+            newFromItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subselect);
+            selectSQLSI = classifySelectWhenLeftItemIsSubSelect(aliasFromItems, aliasSelitems, dataModel, join);
         } else if (fromItem instanceof Table) {
             Table table = (Table) fromItem;
             newFromItem = table;
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
                     .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
-                selectSQLSI = classifySelectWhenLeftItemIsAssociation(dataModel, join);
+                selectSQLSI = classifySelectWhenLeftItemIsAssociation(aliasFromItems, aliasSelitems, dataModel, join);
             } else if (dataModel.getEntities() != null && dataModel.getEntities().containsKey(table.getName())) {
                 Entity entity = dataModel.getEntities().get(table.getName());
                 if (entity.isAssociation()) {
-                    selectSQLSI = classifySelectWhenLeftItemIsAssociationClass(dataModel, join);
+                    selectSQLSI = classifySelectWhenLeftItemIsAssociationClass(aliasFromItems, aliasSelitems, dataModel, join);
                 } else {
-                    selectSQLSI = classifySelectWhenLeftItemIsClass(dataModel, join);
+                    selectSQLSI = classifySelectWhenLeftItemIsClass(aliasFromItems, aliasSelitems, dataModel, join);
                 }
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         selectSQLSI.setFromItem(newFromItem);
         return selectSQLSI;
     }
 
-    private static SelectSQLSI classifySelectWhenLeftItemIsAssociationClass(DataModel dataModel, Join join)
+    private static SelectSQLSI classifySelectWhenLeftItemIsAssociationClass(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, Join join)
             throws Exception {
         SelectSQLSI selectSQLSI;
         Join newJoin = new Join();
@@ -145,38 +148,39 @@ public class SQLSIUtils {
         if (rightItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) rightItem;
             selectSQLSI = new SelectJoinClassAndSub();
-            newRightItem = selectSS(dataModel, subSelect);
+            newRightItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subSelect);
             selectSQLSI = new SelectJoinAssociationClassAndSubSelect();
         } else if (rightItem instanceof Table) {
             Table table = (Table) rightItem;
             newRightItem = table;
+            aliasFromItems.put(table.getAlias().getName(), table);
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
                     .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
 //                selectSQLSI = new SelectJoinAssociationClassAndAssociation();
                 // TODO: Implement this!
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             } else if (dataModel.getEntities() != null && dataModel.getEntities().containsKey(table.getName())) {
                 Entity entity = dataModel.getEntities().get(table.getName());
                 if (entity.isAssociation()) {
 //                    selectSQLSI = SelectJoinAssociationClassAndAssociationClass(dataModel, join);
                     // TODO: Implement this!
-                    throw new Exception("Not supported type of statement");
+                    throw new NotSupportedException("Not supported type of statement");
                 } else {
                     selectSQLSI = new SelectJoinAssociationClassAndClass();
                 }
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         newJoin.setRightItem(newRightItem);
-        newJoin.setOnExpression(join.getOnExpression());
+        newJoin.setOnExpressions(join.getOnExpressions());
         selectSQLSI.setJoins(Arrays.asList(newJoin));
         return selectSQLSI;
     }
 
-    private static SelectSQLSI classifySelectWhenLeftItemIsClass(DataModel dataModel, Join join) throws Exception {
+    private static SelectSQLSI classifySelectWhenLeftItemIsClass(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, Join join) throws Exception {
 
         SelectSQLSI selectSQLSI;
         Join newJoin = new Join();
@@ -185,10 +189,11 @@ public class SQLSIUtils {
         if (rightItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) rightItem;
             selectSQLSI = new SelectJoinClassAndSub();
-            newRightItem = selectSS(dataModel, subSelect);
+            newRightItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subSelect);
         } else if (rightItem instanceof Table) {
             Table table = (Table) rightItem;
             newRightItem = table;
+            aliasFromItems.put(table.getAlias().getName(), table);
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
                     .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
                 selectSQLSI = new SelectJoinClassAndAssociation();
@@ -197,21 +202,21 @@ public class SQLSIUtils {
                 if (entity.isAssociation()) {
                     selectSQLSI = new SelectJoinAssociationClassAndClass();
                 } else {
-                    throw new Exception("Not supported type of statement");
+                    throw new NotSupportedException("Not supported type of statement");
                 }
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         newJoin.setRightItem(newRightItem);
-        newJoin.setOnExpression(join.getOnExpression());
+        newJoin.setOnExpressions(join.getOnExpressions());
         selectSQLSI.setJoins(Arrays.asList(newJoin));
         return selectSQLSI;
     }
 
-    private static SelectSQLSI classifySelectWhenLeftItemIsAssociation(DataModel dataModel, Join join)
+    private static SelectSQLSI classifySelectWhenLeftItemIsAssociation(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, Join join)
             throws Exception {
         SelectSQLSI selectSQLSI;
         Join newJoin = new Join();
@@ -220,28 +225,29 @@ public class SQLSIUtils {
         if (rightItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) rightItem;
             selectSQLSI = new SelectJoinAssociationAndSub();
-            newRightItem = selectSS(dataModel, subSelect);
+            newRightItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subSelect);
         } else if (rightItem instanceof Table) {
             Table table = (Table) rightItem;
             newRightItem = table;
+            aliasFromItems.put(table.getAlias().getName(), table);
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
                     .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             } else if (dataModel.getEntities() != null && dataModel.getEntities().containsKey(table.getName())) {
                 selectSQLSI = new SelectJoinClassAndAssociation();
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         newJoin.setRightItem(newRightItem);
-        newJoin.setOnExpression(join.getOnExpression());
+        newJoin.setOnExpressions(join.getOnExpressions());
         selectSQLSI.setJoins(Arrays.asList(newJoin));
         return selectSQLSI;
     }
 
-    private static SelectSQLSI classifySelectWhenLeftItemIsSubSelect(DataModel dataModel, Join join) throws Exception {
+    private static SelectSQLSI classifySelectWhenLeftItemIsSubSelect(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, Join join) throws Exception {
         SelectSQLSI selectSQLSI;
         Join newJoin = new Join();
         FromItem rightItem = join.getRightItem();
@@ -249,10 +255,11 @@ public class SQLSIUtils {
         if (rightItem instanceof SubSelect) {
             SubSelect subSelect = (SubSelect) rightItem;
             selectSQLSI = new SelectJoinSubAndSub();
-            newRightItem = selectSS(dataModel, subSelect);
+            newRightItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subSelect);
         } else if (rightItem instanceof Table) {
             Table table = (Table) rightItem;
             newRightItem = table;
+            aliasFromItems.put(table.getAlias().getName(), table);
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
                     .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
                 selectSQLSI = new SelectJoinAssociationAndSub();
@@ -264,48 +271,51 @@ public class SQLSIUtils {
                     selectSQLSI = new SelectJoinClassAndSub();
                 }
             } else {
-                throw new Exception("Not supported type of statement");
+                throw new NotSupportedException("Not supported type of statement");
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         newJoin.setRightItem(newRightItem);
-        newJoin.setOnExpression(join.getOnExpression());
+        newJoin.setOnExpressions(join.getOnExpressions());
         selectSQLSI.setJoins(Arrays.asList(newJoin));
         return selectSQLSI;
     }
 
-    private static SelectSQLSI classifySelectBasic(DataModel dataModel, FromItem fromItem) throws Exception {
+    private static SelectSQLSI classifySelectBasic(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, FromItem fromItem) throws Exception {
         SelectSQLSI selectSQLSI = null;
         FromItem newFromItem;
         if (fromItem instanceof SubSelect) {
             selectSQLSI = new SelectBasicSub();
             SubSelect subSelect = (SubSelect) fromItem;
-            newFromItem = selectSS(dataModel, subSelect);
+            newFromItem = selectSS(aliasFromItems, aliasSelitems, dataModel, subSelect);
         } else if (fromItem instanceof Table) {
             Table table = (Table) fromItem;
             newFromItem = table;
+            String tableName = table.getName();
+            aliasFromItems.put(table.getAlias().getName(), table);
             if (dataModel.getAssociations() != null && dataModel.getAssociations().stream()
-                    .anyMatch(assoc -> assoc.getName().equals(table.getName()))) {
+                    .anyMatch(assoc -> assoc.getName().equals(tableName))) {
                 selectSQLSI = new SelectBasicAssociation();
-            } else if (dataModel.getEntities() != null && dataModel.getEntities().containsKey(table.getName())) {
-                if (dataModel.getEntities().get(table.getName()).isAssociation()) {
+            } else if (dataModel.getEntities() != null && dataModel.getEntities().containsKey(tableName)) {
+                if (dataModel.getEntities().get(tableName).isAssociation()) {
                     selectSQLSI = new SelectBasicAssociationClass();
                 } else {
                     selectSQLSI = new SelectBasicClass();
                 }
             }
         } else {
-            throw new Exception("Not supported type of statement");
+            throw new NotSupportedException("Not supported type of statement");
         }
         selectSQLSI.setFromItem(newFromItem);
         return selectSQLSI;
     }
 
-    private static SubSelect selectSS(DataModel dataModel, SubSelect subSelect) throws Exception {
+    private static SubSelect selectSS(HashMap<String, FromItem> aliasFromItems, HashMap<String, SelectItem> aliasSelitems, DataModel dataModel, SubSelect subSelect) throws Exception {
         SubSelect newSubSelect = new SubSelect();
         newSubSelect.setAlias(subSelect.getAlias());
-        newSubSelect.setSelectBody(classifySelectBody(dataModel, subSelect.getSelectBody()));
+        aliasFromItems.put(subSelect.getAlias().getName(), newSubSelect);
+        newSubSelect.setSelectBody(classifySelectBody(aliasFromItems, aliasSelitems, dataModel, subSelect.getSelectBody()));
         return newSubSelect;
     }
 
@@ -635,4 +645,7 @@ public class SQLSIUtils {
         }
     }
 
+    public static String removeTicks(String statement) {
+        return statement.replace("`", "");
+    }
 }
